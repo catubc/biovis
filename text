@@ -1,0 +1,1000 @@
+  215  cd code
+  216  cd imaging/
+  217  python vsd_mask.py 
+  218  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  219  python vsd_mask.py 
+  220  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  221  python vsd_mask.py 
+  222  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  223  python vsd_mask.py 
+  224  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  225  python vsd_mask.py 
+  226  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  227  python vsd_mask.py 
+  228  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  229  python vsd_mask.py 
+  230  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  231  python vsd_mask.py 
+  232  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  233  python vsd_mask.py 
+  234  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  235  python vsd_mask.py 
+  236  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  237  python
+  238  sudo pip install PyQt4
+  239  sudo vi /usr/local/lib/python2.7/dist-packages/matplotlib/mpl-data/matplotlibrc
+  240  sudo apt-get install python-qt4
+  241  python vsd_mask.py 
+  242  cd ..
+  243  cd ephys
+  244  python TSF_cut.py 
+  245  grep -r "reshape"
+  246  python TSF_cut.py 
+  247  ssh catubc@comet.sdsc.xsede.org
+  248  cd ..
+  249  cd imaging/
+  250  python test.py
+  251  cd ..
+  252  cd ephys
+  253  python openneuron.py 
+  254  cd code
+  255  cd imaging/
+  256  python vsd_filter.py 
+  257  python test.py
+  258  sudo apt-get install wine
+  259  sudo apt-get install wine.16
+  260  sudo apt-get install wine1.6
+  261  cd /media/cat/12TB/in_silico/
+  262  cd july_23_7200chs/
+  263  python hdf5_make.py 
+  264  sudo pip install h5py
+  265  python hdf5_make.py 
+  266  cd
+  267  cd code
+  268  cd imaging/
+  269  python test.py
+  270  cd ..
+  271  cd ephys/
+  272  python openneuron.py 
+  273  cd code
+  274  cd imaging/
+  275  python ../ephys/openneuron.py 
+  276  cd ..
+  277  cd ephys
+  278  python optical_flow1
+  279  python optical_flow1.py 
+  280  python optical_flow2.py 
+  281  python optical_flow1.py 
+  282  cd
+  283  cd Downloads/
+  284  mkdir opencv3
+  285  cd opencv3/
+  286  ls
+  287  git clone https://github.com/Itseez/opencv.git
+  288  cd ..
+  289  ls
+  290  rm -rf opencv3/
+  291  rm ubuntu-tweak_0.8.7-1~getdeb2~xenial_all.deb 
+  292  cd /media/
+  293  cd
+  294  sudo apt-get install mencoder
+  295  ls
+  296  cd code
+  297  cd imaging/
+  298  cd ..
+  299  cd ephys
+  300  python openneuron.py 
+  301  python optical_flow2.py 
+  302  sudo pip install cv2
+  303  sudo pip install cv2 --user
+  304  sudo apt-get install python-opencv
+  305  python optical_flow2.py 
+  306  python optical_flow1.py 
+  307  python pcaflow.py 
+  308  cd
+  309  cd Do
+  310  cd Downloads/
+  311  ls
+  312  cd pcaflow-master/
+  313  ls
+  314  ./build.sh
+  315  sudo pip install cython
+  316  ./build.sh
+  317  sudo ./build.sh
+  318  sudo pip install openblas
+  319  sudo apt-get install libopenblas-dev liblapack-dev
+  320  sudo ./build.sh
+  321  python demo
+  322  python demo.py 
+  323  history
+  324  sudo apt-get install python-opencv
+  325  sudo apt-get install --upgrade python-opencv
+  326  sudo apt-get install build-essential
+  327  sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+  328  cd
+  329  cd code
+  330  git init
+  331  git add .
+  332  git commit -m "code update"
+  333  git push origin master
+  334  cd imaging/
+  335  cd ..
+  336  cd ephys/
+  337  python openneuron.py 
+  338  cd
+  339  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o /media/cat/12TB/in_vivo/tim/yuki/IJ1/IJ1_.avi /media/cat/12TB/in_vivo/tim/yuki/IJ1/IJ1.mp4
+  340  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o track1_150Hz_iso1.0_spontaneous_units_3.mp4 out.avi
+  341  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o out.avi track1_150Hz_iso1.0_spontaneous_units_3.mp4 
+  342  mencoder -oac pcm -ovc x264 -vf crop=0:300:0:0 -o out.avi track1_150Hz_iso1.0_spontaneous_units_3.mp4 
+  343  mencoder -oac pcm -ovc x264 -vf crop=0:300:0:0 -o out.mp4 track1_150Hz_iso1.0_spontaneous_units_3.mp4 
+  344  avconv -i out.mp4 -c:v libx264 -c:a copy outputfile.mp4
+  345  sudo apt install libav-tools
+  346  avconv -i out.mp4 -c:v libx264 -c:a copy outputfile.mp4
+  347  avconv -i dim_red.avi -c:v libx264 -c:a copy outputfile.mp4
+  348  avconv -i dim_red.avi -c:v libx264 -c:a copy outputfile1.mp4
+  349  ping ftp.cdrom.com
+  350  ping www.google.com
+  351  cd code
+  352  cd openn
+  353  cd imaging/
+  354  python 
+  355  cd ..
+  356  cd ephys
+  357  python openneuron.py 
+  358  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o ../../Downloads/track1_150Hz_3rd_spontaneous_160715_211403_units_2.mp4 out.mp4
+  359  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o out.mp4 ../../Downloads/track1_150Hz_3rd_spontaneous_160715_211403_units_2.mp4
+  360  mv out.mp4 ../../Downloads/
+  361  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o out.avi ../../Downloads/track1_150Hz_3rd_spontaneous_160715_211403_units_2.mp4
+  362  mv out.avi ../../Downloads/
+  363  python openneuron.py 
+  364  mencoder -oac pcm -ovc x264 -vf crop=0:350:0:0 -o 3LFP.mp4 ../../Downloads/track1_150Hz_iso1.0_spontaneous_units_3.mp4 
+  365  mv 3LFP.mp4 ../../Downloads/
+  366  ipconfig
+  367  ifconfig
+  368  ifconfig -all
+  369  ifconfig /all
+  370  ifconfig /?
+  371  ifconfig --help
+  372  ifconfig -a
+  373  netconfig
+  374  netstat
+  375  wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
+  376  sudo wget http://deb.playonlinux.com/playonlinux_precise.list -O /etc/apt/sources.list.d/playonlinux.list
+  377  sudo apt-get update
+  378  sudo apt-get install playonlinux
+  379  cd code
+  380  cd ephys
+  381  mv opengl* ..
+  382  python openneuron.py 
+  383  python main.py 
+  384  python textbox.py 
+  385  python main.py 
+  386  python test_gui.py 
+  387  python main.py 
+  388  grep -r "rasters"
+  389  python main.py 
+  390  python test_gui.py 
+  391  python main.py 
+  392  python test_gui.py 
+  393  python main.py 
+  394  python test_gui.py 
+  395  sudo pip install edytor
+  396  python test_gui.py 
+  397  sudo pip install edytor
+  398  python main.py 
+  399  python test_gui.py 
+  400  python main.py 
+  401  python test_gui.py 
+  402  python main.py 
+  403  python test_gui.py 
+  404  python main.py 
+  405  python test_gui.py 
+  406  python main.py 
+  407  python test_gui.py 
+  408  python main.py 
+  409  python test_gui.py 
+  410  python main.py 
+  411  python test_gui.py 
+  412  python main.py 
+  413  python test_gui.py 
+  414  python main.py 
+  415  python test_gui.py 
+  416  python main.py 
+  417  cd ..
+  418  git init
+  419  git add .
+  420  git commit -m "main.py gui interface"
+  421  git push origin master
+  422  python main.py 
+  423  cd ephys
+  424  python main.py 
+  425  grep -r "setx"
+  426  grep -r "settick"
+  427  grep -r "setXtick"
+  428  grep -r "Xtick"
+  429  grep -r "xtick"
+  430  grep -r "Xtick"
+  431  python main.py 
+  432  grep -r "gridspec"
+  433  python main.py 
+  434  grep -r "ks_2"
+  435  python main.py 
+  436  grep -r "bars"
+  437  grep -r "bar"
+  438  python main.py 
+  439  cd ..
+  440  git init
+  441  git add .
+  442  git commit -m "main.py update"
+  443  git push origin master
+  444  cd ephys
+  445  python main.py 
+  446  sudo apt-get install gtk-recordmydesktop
+  447  python main.py 
+  448  avconv
+  449  cd 
+  450  cd Downloads/
+  451  avconv -i "input.ogv" -vcodec mjpeg -acodec mp2 -s 640x480 -vb 3000k -ab 160k "output.avi"
+  452  avconv -i "out-1.ogv" -vcodec mjpeg -acodec mp2 -s 640x480 -vb 3000k -ab 160k "output.avi"
+  453  cd ..
+  454  avconv -i "out-1.ogv" -vcodec mjpeg -acodec mp2 -s 640x480 -vb 3000k -ab 160k "output.avi"
+  455  cd code
+  456  cd ephy
+  457  cd ephys
+  458  python main.py 
+  459  cd ephys
+  460  python main.py 
+  461  grep -r "hist"
+  462  python main.py 
+  463  grep -r "sigma"
+  464  cd ..
+  465  cd imaging/
+  466  grep -r "sigma"
+  467  grep -r "ndimage"
+  468  cd ..
+  469  cd ephys
+  470  python main.py
+  471  grep -r "fig"
+  472  python main.py
+  473  python test.py
+  474  python main.py
+  475  python test.py
+  476  python main.py
+  477  rm -rf ~/.local/share/Trash/*
+  478  cd 
+  479  vi trash
+  480  chmod +x trash
+  481  cd code
+  482  cd ephys
+  483  python main.py
+  484  python test.py
+  485  python main.py
+  486  python test.py
+  487  python main.py
+  488  python test.py
+  489  python main.py
+  490  python test.py
+  491  cd ..
+  492  git init
+  493  git add .
+  494  git commit -m "updated code"
+  495  git push origin master
+  496  cd ephys
+  497  python main.py
+  498  python test.py
+  499  python main.py
+  500  python test.py
+  501  python main.py
+  502  python test.py
+  503  cd ..
+  504  git init
+  505  git add .
+  506  git commit -m "sparse array fix"
+  507  git push origin master
+  508  cd ephys
+  509  python main.py 
+  510  cd code
+  511  cd imaging/
+  512  python sta_maps.py 
+  513  sudo pip install plotly
+  514  python sta_maps.py 
+  515  sudo pip install pandas
+  516  python sta_maps.py 
+  517  pip install https://pypi.python.org/packages/source/n/neuroshare/neuroshare-0.9.3.tar.gz
+  518  sudo pip install https://pypi.python.org/packages/source/n/neuroshare/neuroshare-0.9.3.tar.gz
+  519  python sta_maps.py 
+  520  python ../ephys/test_tif.py 
+  521  sudo apt-get install libtiff-dev
+  522  sudo pip install libtiff
+  523  python ../ephys/test_tif.py 
+  524  sudo pip install --upgrade libtiff
+  525  sudo apt-get install --upgrade libtiff-dev
+  526  python ../ephys/test_tif.py 
+  527  sudo apt-get remove libtiff-dev
+  528  python ../ephys/test_tif.py 
+  529  sudo pip remove libtiff
+  530  sudo pip install remove libtiff
+  531  sudo apt-get remove libtiff
+  532  sudo pip uninstall libtiff
+  533  sudo pip uninstall libtiff-dev
+  534  python ../ephys/test_tif.py 
+  535  sudo pip install libtiff-dev
+  536  sudo apt-get install libtiff-dev
+  537  sudo pip install libtiff
+  538  sudo pip install pillow
+  539  sudo pip install --upgrade pillow
+  540  python ../ephys/test_tif.py 
+  541  python sta_maps.py 
+  542  python ../ephys/test_tif.py 
+  543  python sta_maps.py 
+  544  python ../ephys/test_tif.py 
+  545  python sta_maps.py 
+  546  python ../ephys/test_tif.py 
+  547  cd ..
+  548  cd ephys
+  549  python main.py 
+  550  python test.py
+  551  python main.py 
+  552  grep -r "setx"
+  553  grep -r "set_x"
+  554  grep -r "set_xt"
+  555  python main.py 
+  556  cd code
+  557  cd ephys
+  558  python test_tif.py 
+  559  python main.py 
+  560  ls -l /usr/local/lib/python2.7/dist-packages/libtiff/tiff_h_4_0_6.py
+  561  sudo ls -l /usr/local/lib/python2.7/dist-packages/libtiff/tiff_h_4_0_6.py
+  562  sudo ls -l /usr/local/lib/python2.7/dist-packages/libtiff/
+  563  sudo ls -l /usr/local/lib/python2.7/dist-packages/libtiff/tiff_h_4_0_6.py
+  564  cd ..
+  565  ls
+  566  cd Downloads/
+  567  cp tiff_h_4_0_6.py /usr/local/lib/python2.7/dist-packages/libtiff/tiff_h_4_0_6.py
+  568  sudo cp tiff_h_4_0_6.py /usr/local/lib/python2.7/dist-packages/libtiff/tiff_h_4_0_6.py
+  569  cd
+  570  cd code
+  571  git init
+  572  git add .
+  573  git commit -m "update"
+  574  git push origin master
+  575  cd ephys
+  576  python main.py 
+  577  cd code
+  578  cd ephys
+  579  python main.py
+  580  cd code
+  581  cd ephys
+  582  python main.py
+  583  cd code
+  584  cd ephys
+  585  python main.py 
+  586  cd code
+  587  cd ephys
+  588  python main.py 
+  589  cd code
+  590  cd ephys
+  591  python main.py 
+  592  cd code
+  593  cd ephys
+  594  python main.py 
+  595  cd code
+  596  cd ephys
+  597  python main.py 
+  598  cd code
+  599  cd ephys
+  600  python main.py 
+  601  cd code
+  602  cd ephys
+  603  python main.py 
+  604  cd /media/cat/12TB/
+  605  cd in_vi
+  606  ls
+  607  cd in_vivo/
+  608  ls
+  609  cd tim
+  610  ls
+  611  cd cat
+  612  ls
+  613  cd 2016_07_11_vsd/
+  614  cd msl_files/
+  615  ls
+  616  mv track* data
+  617  mv track1* data
+  618  mv track2* data
+  619  ls
+  620  cd ..
+  621  ls
+  622  cd msl_files/
+  623  ls
+  624  cd data
+  625  ls
+  626  cd data/
+  627  ls
+  628  mv *.* ..
+  629  cp *.* ..
+  630  find . -name '*.*' -exec mv {} .. \;
+  631  find -name '*.*' -exec mv {} .. \;
+  632  find -name '*.*' 
+  633  pwd
+  634  find -name '*.*' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  635  find . -name '*.*' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  636  find . -name '*' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  637  ls
+  638  find . -name '*72' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  639  ls
+  640  find . -name '*73' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  641  ls
+  642  find . -name '*66' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  643  find . -name '*070' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  644  find . -name '*071' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  645  find . -name '*' -exec mv {} /media/cat/12TB/in_vivo/tim/cat/2016_07_11_vsd/msl_files/data \;
+  646  cd
+  647  cd code
+  648  cd ephys
+  649  python main.py 
+  650  cd code 
+  651  cd ephys
+  652  python main.py 
+  653  cd code
+  654  cd ephys
+  655  python main.py
+  656  cd code
+  657  cd ephys
+  658  python main.py 
+  659  cd code
+  660  cd ephys
+  661  python main.py 
+  662  cd code
+  663  cd imaging/
+  664  cd ..
+  665  cd ephys
+  666  python main.py 
+  667  cd code
+  668  cd ephys
+  669  python main.py 
+  670  cd
+  671  ./trash
+  672  vi trash
+  673  ./trash
+  674  cd code
+  675  cd ephys
+  676  python main.py 
+  677  cd ..
+  678  git init
+  679  git add .
+  680  git commit -m "update"
+  681  git push origin master
+  682  cd ephys
+  683  python main.py 
+  684  grep -r ".lfp"
+  685  grep -r "def Load_lfp"
+  686  grep -r "def load_lfp"
+  687  grep -r "Load_lfp"
+  688  grep -r "'t0'"
+  689  clear
+  690  grep -r "'t0'"
+  691  grep -r "lfp.zip"
+  692  clear
+  693  grep -r "lfp.zip"
+  694  python main.py 
+  695  cd ..
+  696  git init
+  697  git add .
+  698  git commit -m "updated code"
+  699  git push origin master
+  700  cd ephys
+  701  python main.py
+  702  cd ephys
+  703  python main.py
+  704  cd ..
+  705  git init
+  706  git add .
+  707  git commit -m "updates"
+  708  git push origin master
+  709  git init
+  710  git add .
+  711  git commit -m "dir reorder"
+  712  git push origin master
+  713  cd ephys
+  714  python main.py
+  715  cd code
+  716  cd ephys
+  717  python main.py 
+  718  cd ..
+  719  ls
+  720  git clone https://github.com/catubc/neurotools
+  721  ls
+  722  cd neurotools/
+  723  ls
+  724  cat .git
+  725  .cat .gitignore 
+  726  cat .gitignore 
+  727  touch text
+  728  git add .
+  729  git commit -m "test commit"
+  730  git push
+  731  cd ..
+  732  cd ephys
+  733  python main.py 
+  734  cd ..
+  735  git init
+  736  git add .
+  737  git commit -m "update"
+  738  git push
+  739  cd ephys
+  740  python main.py 
+  741  grep -r "np.append"
+  742  python main.py 
+  743  lvm
+  744  sudo apt-get install gparted
+  745  df
+  746  cd code
+  747  cd ephys
+  748  python main.py 
+  749  grep -r "header"
+  750  python main.py 
+  751  grep -r "compress"
+  752  python main.py 
+  753  grep -r "barak"
+  754  python main.py 
+  755  python test.py
+  756  python main.py 
+  757  grep -r "def save_tsf"
+  758  grep -r "dummy"
+  759  grep -r "empty"
+  760  grep -r 'Test "
+  761  grep -r 'Test '
+  762  grep -r "Siteloc"
+  763  python main.py 
+  764  grep -r "_lp"
+  765  grep -r "lp_compressed"
+  766  grep -r "_raw"
+  767  clear
+  768  grep -r "_raw"
+  769  grep -r "_lp"
+  770  clear
+  771  grep -r "_lp"
+  772  cd ..
+  773  git init
+  774  git add .
+  775  git commit -m "updating seamans loading code"
+  776  git push
+  777  cd ephys
+  778  grep -r "wavelet"
+  779  python main.py
+  780  grep -r "butter_band"
+  781  grep -r "def butter_band"
+  782  python main.py
+  783  grep -r "def butter"
+  784  cd ..
+  785  grep -r "def butter"
+  786  grep -r "def butter:"
+  787  cd ephys
+  788  grep "import butter"
+  789  grep -r "import butter"
+  790  python main.py
+  791  cd ..
+  792  git init
+  793  git add .
+  794  git commmit -m "rat code"
+  795  git commit -m "rat code"
+  796  git push
+  797  cd neurotools/
+  798  python neurotools.py 
+  799  git init
+  800  git add .
+  801  commit -m "barebones GUI"
+  802  git init
+  803  git add .
+  804  git commit -m "barebones GUI"
+  805  git push
+  806  cd ..
+  807  cd ephys
+  808  python main.py 
+  809  cd ..
+  810  mkdir biovis
+  811  cd biovis
+  812  git init
+  813  echo "# biovis" >> README.md
+  814  git init
+  815  git add README.md 
+  816  git commit -m "first commit"
+  817  git push
+  818  git remote add origin https://github.com/catubc/biovis.git
+  819  git push -u origin master
+  820  cd ..
+  821  cd ephys
+  822  python main.py 
+  823  grep -r "filter_images"
+  824  python main.py 
+  825  cd ..
+  826  git init
+  827  git add .
+  828  git commit -m "code updates"
+  829  git push
+  830  git fetch
+  831  git init
+  832  git add .
+  833  git commit -m "code updates"
+  834  git pull
+  835  git init
+  836  git add .
+  837  git commit -m "code updates"
+  838  git push
+  839  git init
+  840  git add .
+  841  git commit -m "update2"
+  842  git push
+  843  cd ephys
+  844  python main.py 
+  845  cd
+  846  vi brainexplorer2
+  847  chmod +x brainexplorer2 
+  848  ./brainexplorer2 
+  849  vi brainexplorer2 
+  850  ./brainexplorer2 
+  851  vi brainexplorer2 
+  852  ./brainexplorer2 
+  853  cd code
+  854  ls
+  855  mkdir openneuron
+  856  cd openneuron/
+  857  python main.py 
+  858  grep -r "filter"
+  859  python main.py 
+  860  grep -r "animal_analysis"
+  861  python main.py 
+  862  WINEARCH
+  863  cd
+  864  cd ./wine
+  865  cd .wine/
+  866  ls
+  867  cd
+  868  ~/.wine32
+  869  .wine/drive_c/
+  870  ls
+  871  cd .wine/drive_c/
+  872  ls
+  873  cd windows/
+  874  ls
+  875  cd ..
+  876  ls
+  877  cd Program\ Files
+  878  ls
+  879  cd ..
+  880  ls
+  881  cd Program\ Files (x86)
+  882  cd Program\ Files\x86)
+  883  cd Program\ Files
+  884  cd ..
+  885  cd Program Files (x86)/
+  886  LS
+  887  ls
+  888  cd Program Files (x86) 
+  889  cd Program\ Files\ (x86) 
+  890  ls
+  891  mv Program\ Files temp
+  892  cd Program\ Files\ \(x86\)/
+  893  ls
+  894  cd Allen\ Institute/
+  895  ls
+  896  cd Brain\ Explorer\ 2/
+  897  ls
+  898  ./BrainExplorer2.exe 
+  899  ./BrainExplorer2.exe WINEDEBUG=warn+heap
+  900  ./BrainExplorer2.exe warn+heap
+  901  env WINEPREFIX=~/.wine32 WINEARCH=win32 winecfg
+  902  ~/.wine32
+  903  WINEARCH=win32 WINEPREFIX=~/.wine winecfg
+  904  WINEARCH=win32 WINEPREFIX=~/.wine32 winecfg
+  905  WINEPREFIX=~/.wine32 WINEARCH=win32 your_32bit_executable.exe
+  906  WINEPREFIX=~/.wine32 WINEARCH=win32 ./BrainExplorer2.exe 
+  907  ls
+  908  WINEPREFIX=~/.wine32 WINEARCH=win32 ./BrainExplorer2.exe 
+  909  WINEPREFIX=~/.wine32 WINEDEBUG=warn+heap WINEARCH=win32 ./BrainExplorer2.exe 
+  910  pwd
+  911  cd
+  912  ls
+  913  cd
+  914  ls
+  915  ./brainexplorer2 
+  916  sudo apt-get install texlive-full
+  917  texlive
+  918  tex
+  919  texliveonfly 
+  920  sudo apt-get remove texlive-full
+  921  sudo apt-get remove texlive
+  922  cd /media/cat/12TB/in_vivo/tim/yuki/IA1/video_files/
+  923  ffmpeg -i input.wmv -s size output.mp4
+  924  ffmpeg -i IA1am_May20_Week6_30Hz.wmv -s size output2.mp4
+  925  ffmpeg -i IA1am_May20_Week6_30Hz.wmv -s xga output2.mp4
+  926  cd code
+  927  cd openneuron/
+  928  python main.py 
+  929  git init
+  930  git add .
+  931  git commit -m "initial commit"
+  932  history
+  933  git remote add origin https://github.com/catubc/openneuron.git
+  934  git push
+  935  git push -u origin master
+  936  git remote add origin https://github.com/catubc/openneuron.git
+  937  git init
+  938  git add .
+  939  git commit -m "initial commit"
+  940  git remote add origin https://github.com/catubc/openneuron.git
+  941  git push -u origin master
+  942  vi README.md
+  943  python main.py 
+  944  cd
+  945  ./brainexplorer2 
+  946  cd code
+  947  cd openneuron/
+  948  python main.py 
+  949  grep -r "glob"
+  950  python main.py 
+  951  sudo pip install imageio
+  952  python main.py 
+  953  sudo pip install skvideo
+  954  sudo pip install scikit-video
+  955  python main.py 
+  956  cd /media/cat/12TB/
+  957  ls
+  958  cd in_vivo/
+  959  ls
+  960  cd tim
+  961  ls
+  962  cd yuki
+  963  ls
+  964  cd IA1
+  965  cd video_files/
+  966  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -s size output.mp4
+  967  ffmpeg -i IA1am_May10_Week5_30Hz.wmv  output.mp4
+  968  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -s xga output.mp4
+  969  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -s "xga" output.mp4
+  970  ffmpeg -i IA1am_May10_Week5_30Hz.wmv '-strict -2' -s "xga" output.mp4
+  971  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -s "xga" output.mp4
+  972  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -strict -2 -s "xga" output.mp4
+  973  ffmpeg -i IA1am_May10_Week5_30Hz.wmv -strict -2 -s 1280x720 output.mp4
+  974  cd
+  975  cd code
+  976  cd openneuron/n
+  977  cd openneuron/
+  978  python main.py 
+  979  sudo apt-get install WinFF w32codecs
+  980  sudo apt-get install WinFF 
+  981  sudo apt-get install Avidemux
+  982  sudo apt-get install avidemux
+  983  winff
+  984  cd code
+  985  git init
+  986  git add .
+  987  git commit -m "new codes added"
+  988  git push
+  989  cd code
+  990  cd openneuron/
+  991  python main.py 
+  992  sudo add-apt-repository ppa:stebbins/handbrake-releases
+  993  sudo apt-get update
+  994  apt-get install handbrake-gtk
+  995  sudo apt-get install handbrake-gtk
+  996  python main.py 
+  997  .b/r
+  998  ./brainexplorer2 
+  999  cd code
+ 1000  cd openneuron/
+ 1001  python main.py 
+ 1002  grep -r "grey"
+ 1003  grep -r "gray"
+ 1004  grep -r "grey"
+ 1005  python main.py 
+ 1006  grep -r "fig"
+ 1007  grep -r "fig, "
+ 1008  python main.py 
+ 1009  grep -r "np.where"
+ 1010  python main.py 
+ 1011  grep -r "gray"
+ 1012  python main.py 
+ 1013  ls *.npy
+ 1014  rm *.npy
+ 1015  ls
+ 1016  ls -l
+ 1017  python main.py 
+ 1018  cd ..
+ 1019  git init
+ 1020  git add .
+ 1021  git commit -m "openneuron work"
+ 1022  cd openneuron/
+ 1023  git init
+ 1024  git add .
+ 1025  git commit -m "updates"
+ 1026  git push
+ 1027  df
+ 1028  ffmpeg -encoders | grep - windows
+ 1029  ffmpeg -encoders | grep i- windows
+ 1030  ffmpeg -encoders | grep -i windows
+ 1031  ls *.wmv
+ 1032  $ ffmpeg -i input.wmv output.avi
+ 1033  $ ffmpeg -i IA3_2016-04-27\ 14-23-21.838. output.avi
+ 1034  $ ffmpeg -i IA3_2016-04-27 14-23-21.838. output.avi
+ 1035  $ ffmpeg -i IA3_2016-04-27output.avi
+ 1036  $ ffmpeg -i IA3_2016-04-27 output.avi
+ 1037  ffmpeg -i IA3_2016-04-27 output.avi
+ 1038  ffmpeg -i IA3_2016-04-27.wmv output.avi
+ 1039  $ mencoder input.wmv -o output.avi -ofps 23.976 -ovc lavc -oac copy
+ 1040  $ mencoder IA3_2016-04-27.wmv -o output.avi -ofps 23.976 -ovc lavc -oac copy
+ 1041  mencoder IA3_2016-04-27.wmv -o output.avi -ofps 23.976 -ovc lavc -oac copy
+ 1042  cd Downloads/
+ 1043  ls
+ 1044  cd ffmpeg-3.1.2/
+ 1045  ls
+ 1046  vi README.md 
+ 1047  vi RELEASE
+ 1048  ./configure 
+ 1049  vi INSTALL.md 
+ 1050  sudo ./configure 
+ 1051  sudo apt-get install yasm
+ 1052  ls
+ 1053  ./configure 
+ 1054  make
+ 1055  make install
+ 1056  sudo make install
+ 1057  sudo apt-get install upgrade vlc
+ 1058  sudo apt-get install vlc vlc-plugin-*
+ 1059  sudo add-apt-repository ppa:nicola-onorata/desktop
+ 1060  sudo apt update
+ 1061  sudo apt install vlc
+ 1062  $ mencoder input.wmv -o output.avi -ofps 23.976 -ovc lavc -oac copy
+ 1063  sudo apt-get install update ffmpeg
+ 1064  cd code
+ 1065  cd openneuron/
+ 1066  python main.py 
+ 1067  git init
+ 1068  git add .
+ 1069  git commit -m "updating lever-pull analysis code"
+ 1070  git push
+ 1071  ls
+ 1072  python main.py 
+ 1073  grep -r "butter"
+ 1074  python main.py 
+ 1075  grep -r "mask"
+ 1076  python main.py 
+ 1077  grep -r "set_yticks"
+ 1078  grep -r "set_xticks"
+ 1079  grep -r "xticks"
+ 1080  cd ..
+ 1081  grep -r "set_yticks"
+ 1082  cd openneuron/
+ 1083  python main.py 
+ 1084  git init
+ 1085  git add .
+ 1086  git commit -m "dff and filtering work"
+ 1087  git push
+ 1088  cd ..
+ 1089  git init
+ 1090  git add .
+ 1091  git commit -m "all code backup"
+ 1092  git push
+ 1093  cd openneuron/
+ 1094  ls
+ 1095  cd code
+ 1096  cd openneuron/
+ 1097  python main.py
+ 1098  git init
+ 1099  git add .
+ 1100  git commit -m "session, animal, code button work"
+ 1101  git push
+ 1102  python main.py 
+ 1103  grep -r "find_nearest"
+ 1104  python main.py 
+ 1105  git init
+ 1106  git add .
+ 1107  git commit -m "updated dff code"
+ 1108  git push
+ 1109  ls
+ 1110  python main.py 
+ 1111  grep -r "Global Average"
+ 1112  grep -r "Sliding Win"
+ 1113  grep -r "No Filter"
+ 1114  clear
+ 1115  grep -r "No Filter"
+ 1116  python main.py 
+ 1117  grep -r "No Filter"
+ 1118  python main.py 
+ 1119  grep -r "No Filter"
+ 1120  python main.py 
+ 1121  git init
+ 1122  git add .
+ 1123  git commit -m "more code"
+ 1124  git push
+ 1125  cd code
+ 1126  cd openneuron/
+ 1127  python main.py 
+ 1128  grep -r "# of trials"
+ 1129  python main.py 
+ 1130  python test.py 
+ 1131  python main.py 
+ 1132  git init
+ 1133  git add .
+ 1134  git commit -m "trial selector working"
+ 1135  git push
+ 1136  git commit -m "trial selector working"
+ 1137  python main.py 
+ 1138  git commit -m "trial selector working"
+ 1139  python main.py 
+ 1140  grep -r "memmap"
+ 1141  grep -r "memm"
+ 1142  grep -r "mem_m"
+ 1143  grep -r "r+"
+ 1144  grep -r "mmap"
+ 1145  grep -r "r+"
+ 1146  python main.py 
+ 1147  grep -r "mask"
+ 1148  grep -r "generic_mask_indexes"
+ 1149  python main.py 
+ 1150  rm -rf ~/.local/share/Trash/*
+ 1151  cd ~/.local/share/
+ 1152  ls
+ 1153  cd Trash/
+ 1154  ls
+ 1155  cd ..
+ 1156  cd 
+ 1157  rm -rf ~/.local/share/Trash/*
+ 1158  cd code
+ 1159  cd openneuron/
+ 1160  python openn
+ 1161  python main.py 
+ 1162  cd /media/cat/12TB/in_vivo/tim/yuki/
+ 1163  ls
+ 1164  find . -name "_global*"
+ 1165  find . -name "_global*" -type f
+ 1166  find . -name "*_global*" -type f
+ 1167  find . -name "*_global*" -type f -delete
+ 1168  find . -name "*_global*" -type f 
+ 1169  find . -name "*_global*" -type f -delete
+ 1170  find . -name "*_global*" -type f 
+ 1171  find . -name "*_global*" -type f -delete
+ 1172  find . -name "*_global*" -type f 
+ 1173  find . -name "*_global*" -type f -delete
+ 1174  find . -name "*_global*" -type f 
+ 1175  find . -name "*_global*" -type f -delete
+ 1176  find . -name "*_global*" -type f 
+ 1177  find . -name "*_global*" -type f -delete
+ 1178  find . -name "*_global*" -type f 
+ 1179  find . -name "*_global*" -type f -delete
+ 1180  find . -name "*_3sec*" -type f 
+ 1181  find . -name "*_3sec*" -type f -delete
+ 1182  history
+ 1183  rm -rf ~/.local/share/Trash/*
+ 1184  history
+ 1185  rm -rf ~/.local/share/Trash/*
+ 1186  sudo rm -rf ~/.local/share/Trash/*
+ 1187  exit
+ 1188  eclipse -clean
+ 1189  sudo pip-install pandasa
+ 1190  sudo pip-install pandas
+ 1191  sudo pip install pandas
+ 1192  sudo pip install --upgrdae pandas
+ 1193  sudo pip install --upgrade pandas
+ 1194  cd code
+ 1195  cd biovis
+ 1196  grep -r "config_"
+ 1197  grep -r "config"
+ 1198  python main.py 
+ 1199  grep -r "config"
+ 1200  python main.py 
+ 1201  cd ..
+ 1202  cd openneuron/
+ 1203  python main.py 
+ 1204  cd ..
+ 1205  cd biovis
+ 1206  python main.py 
+ 1207  git add .
+ 1208  git init
+ 1209  git add .
+ 1210  git commit -m "first commit"
+ 1211  git init
+ 1212  git add .
+ 1213  git commit -m "first commit"
+ 1214  history > text
