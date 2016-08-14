@@ -9,7 +9,6 @@ import numpy as np
 import h5py
 import math
 
-import vismorph as vm 
 import pandas as pd
 import pylab as plt
 
