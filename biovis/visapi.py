@@ -3,42 +3,52 @@
 #Authors: Catalin Mitelut, Sergey Gratiy
 #MIT License
 
+import sip
+sip.setapi('QString', 2) #Sets the qt string to native python strings so can be read without weird stuff
+
 import numpy as np
+
+#from PyQt4 import QtGui, QtCore     #SIMPLIFY THESE IMPORTS ****************************************************************************
 
 from PyQt4 import QtGui, QtCore, QtOpenGL   #QtOpenGL installs via "sudo apt-get install python-qt4-gl"
 from OpenGL.GL import *                     #OpenGL installs in ubuntu via "sudo pip install PyOpenGL PyOpenGL_accelerate"
 from OpenGL.GLU import *                    #only used in one location... not clear if necessary
 
+#from simulation import *
+
+np.set_printoptions(suppress=True)      #Supress scientific notation printing
+
 
 class GLWindow(QtGui.QWidget):
     
-    def __init__(self, parent=None):
+    def __init__(self, vis, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        self.glWidget = GLWidget(parent=self)
-        
-        self.glWidget.bkgr=0
+        self.glWidget = GLWidget(vis, parent=self)
         
         mainLayout = QtGui.QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
         
         self.setLayout(mainLayout)
-        self.setWindowTitle(self.tr("OpenGL test"))
+        self.setWindowTitle(self.tr("Biovis"))
 
-        #Default: don't plot segments or somas
-        self.glWidget.plot_seg=0
-        self.glWidget.plot_soma=0
-        self.glWidget.plot_frame=1
+        ##Default: don't plot segments or somas
+        #self.glWidget.plot_seg=0
+        #self.glWidget.plot_soma=0
+        #self.glWidget.plot_frame=1
         
         self.show()
 
 class GLWidget(QtOpenGL.QGLWidget):
     
-    def __init__(self, parent=None):
+    def __init__(self,vis, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.lastPos = QtCore.QPoint()
         self.focus = np.float32([0, 0, 0]) # init camera focus
         self.axes = 'both' # display both mini and focal xyz axes by default
-        
+        self.background = vis.background
+
+        self.segments = vis.dendrites_1D
+        self.segments_colours = vis.dendrites_1D_colours
 
         format = QtOpenGL.QGLFormat()
         
@@ -59,8 +69,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         colormap.setEntries(cmap)
         self.setColormap(colormap)
         '''
-        
-        
+
 
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
@@ -69,10 +78,11 @@ class GLWidget(QtOpenGL.QGLWidget):
         return QtCore.QSize(1000, 800)
 
     def initializeGL(self):
-        if self.bkgr==0:
-            glClearColor(0.0, 0.0, 0.0, 1.0) # Black / White toggle switch
-        else:
-            glClearColor(1.0, 1.0, 1.0, 1.0)
+        
+        if self.background=='black': glClearColor(0.0, 0.0, 0.0, 1.0) # Black / White toggle switch
+        if self.background=='white': glClearColor(1.0, 1.0, 1.0, 1.0)
+
+        print self.background
 
         glClearDepth(10.0) # same as default
         glEnable(GL_DEPTH_TEST) # display points according to occlusion, not order of plotting
@@ -125,14 +135,12 @@ class GLWidget(QtOpenGL.QGLWidget):
         #GL.glVertexPointerf(cells.points_seg) # float32
 
         #Plot layer planes
-        #if layers_show==1:
-        if False==1:
+        if False:
             glColorPointerub(self.colours_layers) # unsigned byte, ie uint8
             glVertexPointerf(self.layers) # float32
             glDrawArrays(GL_TRIANGLES, 0, len(self.layers))
 
         #Plot electrode
-        #if electrode_show==1:
         if False:
             glColorPointerub(self.colours_electrode) # unsigned byte, ie uint8
             glVertexPointerf(self.electrode) # float32
@@ -151,17 +159,15 @@ class GLWidget(QtOpenGL.QGLWidget):
         #   self.renderText (-50,175,0, 'Time: %.1f (ms)' % (float(self.time_index_counter+self.offset)/10.))
 
         #Plot regular segments 0-width
-        #if (self.plot_seg==1): # and plot_seg3d!=1): 
-        if False: # and plot_seg3d!=1): 
-            glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
-            glVertexPointerf(self.dendrite_quads) # float32
-            glDrawArrays(GL_QUADS, 0, len(self.dendrite_quads))
+        if len(self.segments)>0:
+            glColorPointerub(self.segments_colours) # unsigned byte, ie uint8
+            glVertexPointerf(self.segments) # float32
+            glDrawArrays(GL_LINES, 0, len(self.segments))
+
+            #glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
+            #glVertexPointerf(self.dendrite_quads) # float32
+            #glDrawArrays(GL_QUADS, 0, len(self.dendrite_quads))
             
-            #GL.glColorPointerub(self.colours) # unsigned byte, ie uint8
-            #GL.glVertexPointerf(self.points) # float32
-            #GL.glDrawArrays(GL.GL_LINES, 0, len(self.points))
-
-
 
         #************** Plots somas ************
         #if self.plot_soma==1:
@@ -169,10 +175,6 @@ class GLWidget(QtOpenGL.QGLWidget):
             glColorPointerub(self.triangle_colours) # unsigned byte, ie uint8
             glVertexPointerf(self.triangle_points) # float32
             glDrawArrays(GL_TRIANGLES, 0, len(self.triangle_points)*3)
-
-            #GL.glColorPointerub(self.quad_colours) # unsigned byte, ie uint8
-            #GL.glVertexPointerf(self.quad_points) # float32
-            #GL.glDrawArrays(GL.GL_QUADS, 0, len(self.quad_points)*4)
 
 
         #Cortical frame + patch box
@@ -219,48 +221,6 @@ class GLWidget(QtOpenGL.QGLWidget):
                 self.renderText (-600,-749,500, "L6")
 
 
-        #Raster movie frame (x-axis + y-axis)
-        #if self.plot_frame==2:
-        if False:
-            glColorPointerub(self.colours_frame) # unsigned byte, ie uint8
-            glVertexPointerf(self.points_frame) # float32
-            glDrawArrays(GL_LINES, 0, len(self.points_frame))
-
-            glColorPointerub(self.raster_colors) # unsigned byte, ie uint8
-            glVertexPointerf(self.raster_triangles) # float32
-            glDrawArrays(GL_POINTS, 0, len(self.raster_triangles))
-            if bkgr==0:
-                glColor3ub(255, 255, 255)
-            else:
-                glColor3ub(0, 0, 0)
-            self.renderText (-950,-2000,0, '%.1f (ms)' % float(float(self.time_index_counter+self.start_time)/10.))
-
-            tc = CMAP[[COLOUR_DICT[self.yaxis_label[0]]]][0]
-            glColor3ub(tc[0],tc[1],tc[2])
-            self.renderText (-3200, -200, 0, self.yaxis_label[0])
-            self.renderText (-3000 -75 + self.yaxis_ticks[0]*2000/sim_cells/2., 50 , 0, self.yaxis_label[0])
-
-            self.renderText (-1900, 100, 0, "-SOURCES-")
-            self.renderText (-3400, -1000, 0, "-TARGETS-")
-
-            for i in range(1, 8):
-                tc = CMAP[[COLOUR_DICT[self.yaxis_label[i]]]][0]
-                glColor3ub(tc[0],tc[1],tc[2])
-                self.renderText (-3200, -self.yaxis_ticks[i-1]*2000/sim_cells - (self.yaxis_ticks[i]*2000/sim_cells-self.yaxis_ticks[i-1]*2000/sim_cells)/2., 0, self.yaxis_label[i])
-
-                tc = CMAP[[COLOUR_DICT[self.yaxis_label[i]]]][0]
-                glColor3ub(tc[0],tc[1],tc[2])
-                self.renderText (-3000-75+self.yaxis_ticks[i-1]*2000/sim_cells + (self.yaxis_ticks[i]*2000/sim_cells-self.yaxis_ticks[i-1]*2000/sim_cells)/2., 50 , 0, self.yaxis_label[i])
-
-            glColorPointerub(self.colors_axis) # unsigned byte, ie uint8
-            glVertexPointerf(self.points_axis) # float32
-            glDrawArrays(GL.GL_LINES, 0, len(self.points_axis))
-            
-            #glwin.glWidget.yaxis_ticks = yaxis_ticks
-            #glwin.glWidget.yaxis_label = yaxis_label
-
-            #print '%.1f (ms)' % float(float(self.time_index_counter)/10.)
-
         #text="**********TEST *************"
         #GL.glVertexAttribIPointer(1, 1, GL.GL_UNSIGNED_BYTE, 1, text)
         #GL.glColorPointerub(self.colours_soma) # unsigned byte, ie uint8
@@ -292,7 +252,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         # fov (deg) controls amount of perspective, and as a side effect initial apparent size
-        gluPerspective(45, width/height, 0.01, 1000000) # fov, aspect, nearz & farz
+        gluPerspective(45, width/height, 0.1, 100000.) # fov, aspect, nearz & farz
                                                            # clip planes
         glMatrixMode(GL_MODELVIEW)
     
@@ -435,16 +395,19 @@ class GLWidget(QtOpenGL.QGLWidget):
             if modifiers == QtCore.Qt.ControlModifier:
                 self.roll(-0.5*dx - 0.5*dy)
             elif modifiers == QtCore.Qt.ShiftModifier:
-                self.pan(dx/600, -dy/600) # qt viewport y axis points down
+                self.pan(dx/600., -dy/600.) # qt viewport y axis points down
             else:
                 self.yaw(0.5*dx)
                 self.pitch(0.5*dy)
         elif buttons == QtCore.Qt.RightButton:
-            self.zoom(-dy/500) # qt viewport y axis points down
+            self.zoom(-dy/500.) # qt viewport y axis points down
 
         self.updateGL()
         self.lastPos = QtCore.QPoint(event.pos())
 
     def wheelEvent(self, event):
-        self.zoom(event.delta() / 1000)
+        self.zoom(event.delta() / 1000.)
         self.updateGL()
+
+
+
