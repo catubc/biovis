@@ -44,16 +44,16 @@ class Biovis(object):
         self.segments_colours = []
         self.triangle_points=[]
         self.triangle_colours=[]
+        self.layers = []
+        self.layers_colours = []
 
     def load_selection_dendrites(self, cells_select_df):
         
-        RotX = np.array([[1, 0, 0],    # rotate around x axis
-                     [0, 0, 1],
-                     [0, 1, 0]])
+        #RotX = np.array([[1, 0, 0],    # rotate around x axis      #Cat: NOT USED
+        #             [0, 0, 1],
+        #             [0, 1, 0]])
     
-        #for gid,cell_prop in self.cells_display_df.iterrows():  
-        
-        self.segments = []
+        self.segments = []  #collect all segments; convert to numpy afterwards
         for gid, cell_prop in cells_select_df.iterrows():  
             if gid%1000==0: print "... processing cell: ", gid
             
@@ -68,44 +68,37 @@ class Biovis(object):
             RotY = self.rotation_matrix([0,1,0],phi_y)
             RotZ = self.rotation_matrix([0,0,1],-phi_z)
             RotYZ = RotY.dot(RotZ)	# apply two rotations
-                
+
             model_id =  cell_prop['model_id']	
             morph_segs_start = self.morphologies[model_id]["segs_start"]
             morph_segs_end =   self.morphologies[model_id]["segs_end"] 
                 
             segs_start = pos_soma + np.dot(morph_segs_start,RotYZ.T)  # use the tranposed matrix since we multiply on the right
             segs_end = pos_soma + np.dot(morph_segs_end,RotYZ.T)
-            pos_soma = np.dot(pos_soma,RotX.T)*1E-3     #WHY ARE WE ROTATING THIS AT THIS POINT?  NOT USED ANYMORE...
-                
-            segs_start = np.dot(segs_start,RotX.T)*1E-3	
-            segs_end = np.dot(segs_end,RotX.T)*1E-3		# for display purposes switch z and y, convert to mm:
-            
+           
             tot_segs = np.empty((len(segs_start)*2, 3), dtype=np.float32)
             tot_segs[::2]=segs_start; tot_segs[1::2]=segs_end
                         
             self.segments.extend(tot_segs)
 
         print "... done loading cells..."
-        
+             
         print "...generating cell colours..."
         self.segments_colours = []
-        for k in range(len(self.segments)):
+        for k in range(len(self.segments)):     #should do this in one step...
             self.segments_colours.append([0,255,0])
         
-        print "...converting lists to arrays..."
-        self.segments = np.array(self.segments)*1E3
+        print "...converting lists to arrays ..."
+        self.segments = np.array(self.segments)
         self.segments_colours = np.array(self.segments_colours)
-        
+        print self.segments.shape
+
         print "... done all ..."
 
 
     def load_selection_somas(self, cells_select_df):
 
         self.load_soma_sphere()    #Open sphere primitive
-
-        RotX = np.array([[1, 0, 0],    # rotate around x axis
-                     [0, 0, 1],
-                     [0, 1, 0]])
     
         self.triangle_points=[]
         self.triangle_colours=[]
@@ -129,32 +122,29 @@ class Biovis(object):
             
             soma_start = self.morphologies[model_id]["segs_start"][0]
             soma_end =   self.morphologies[model_id]["segs_end"][0]
-                
-            soma_start = pos_soma + np.dot(soma_start,RotYZ.T)*1E3  # use the tranposed matrix since we multiply on the right
-            soma_end = pos_soma + np.dot(soma_end,RotYZ.T)*1E3
             
-            #pos_soma = np.dot(pos_soma,RotX.T)*1E-3    #no need to rotate somas - BUT WILL IN FUTURE WHEN USING .SWC FILES
+            soma_start = pos_soma + np.dot(soma_start,RotYZ.T)
+            soma_end = pos_soma + np.dot(soma_end,RotYZ.T)
             
-            soma_start = np.dot(soma_start,RotX.T)#*1E-3	
-            soma_end = np.dot(soma_end,RotX.T)#*1E-3		# for display purposes switch z and y, convert to mm:
+           
+            size=np.linalg.norm(soma_start-soma_end)          #Size of cell soma;
             
-            size=np.linalg.norm(soma_start-soma_end)/50.#*1E3  #Size of cell soma;
-            
-            soma_centre=(soma_end-soma_start)/2.
+            soma_centre=(soma_end+soma_start)/2.
+
 
             #Make triangle surfaces
             for j in range(len(self.triangle_faces)):
                 self.triangle_points.append([[self.vertices[int(self.triangle_faces[j][0])-1][0]*size/2.+soma_centre[0],
-                                            self.vertices[int(self.triangle_faces[j][0])-1][1]*size/2.-soma_centre[2]-size/2,
-                                            self.vertices[int(self.triangle_faces[j][0])-1][2]*size/2.+soma_centre[1]],
+                                            self.vertices[int(self.triangle_faces[j][0])-1][1]*size/2.+soma_centre[1]-size/2,
+                                            self.vertices[int(self.triangle_faces[j][0])-1][2]*size/2.+soma_centre[2]],
                                             
                                              [self.vertices[int(self.triangle_faces[j][1])-1][0]*size/2.+soma_centre[0], 
-                                            self.vertices[int(self.triangle_faces[j][1])-1][1]*size/2.-soma_centre[2]-size/2, 
-                                            self.vertices[int(self.triangle_faces[j][1])-1][2]*size/2.+soma_centre[1]], 
+                                            self.vertices[int(self.triangle_faces[j][1])-1][1]*size/2.+soma_centre[1]-size/2, 
+                                            self.vertices[int(self.triangle_faces[j][1])-1][2]*size/2.+soma_centre[2]], 
                                             
                                              [self.vertices[int(self.triangle_faces[j][2])-1][0]*size/2.+soma_centre[0],
-                                             self.vertices[int(self.triangle_faces[j][2])-1][1]*size/2.-soma_centre[2]-size/2,
-                                             self.vertices[int(self.triangle_faces[j][2])-1][2]*size/2.+soma_centre[1]]                                             
+                                             self.vertices[int(self.triangle_faces[j][2])-1][1]*size/2.+soma_centre[1]-size/2,
+                                             self.vertices[int(self.triangle_faces[j][2])-1][2]*size/2.+soma_centre[2]]                                             
                                              ])
 
                                     
@@ -166,8 +156,9 @@ class Biovis(object):
                  
                 for k in range(3):
                     self.triangle_colours.append([255, 0, 0])
-
-        self.triangle_points = np.array(self.triangle_points)
+        
+        
+        self.triangle_points = np.array(self.triangle_points) #*1E3
         self.triangle_colours = np.array(self.triangle_colours)
 
 
@@ -230,10 +221,71 @@ class Biovis(object):
                          [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
                          [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
 
+
+
+    def setlayers(self, layer_depths, layer_colors):
         
-    def set_somata3d(self):
-        pass
+        self.layers = []
+    
+        for depth in layer_depths:
+            vertex_0 = [-500., -depth, 500.]
+            vertex_1 = [500., -depth, 500.]
+            vertex_2 = [-500., -depth, -500.]
+
+            vertex_3 = [-500., -depth, -500.]
+            vertex_4 = [500., -depth, -500.]
+            vertex_5 = [500., -depth, 500.]
+
+            self.layers.append(vertex_0)
+            self.layers.append(vertex_1)
+            self.layers.append(vertex_2)
+            self.layers.append(vertex_3)
+            self.layers.append(vertex_4)
+            self.layers.append(vertex_5)
+                
+        self.layers_colours = layer_colors * len(layer_depths)*6  #uint8; Need colour for every node, not every vertex; i.e. 2 x no. vertices  
         
+        self.layers = np.array(self.layers)
+        self.layers_colours = np.array(self.layers_colours)
+
+
+    def setbox(self, box_coords, box_colour):
+        
+        self.frame = []
+        self.frame.append(box_coords[0])
+        self.frame.append(box_coords[1])
+        self.frame.append(box_coords[1])
+        self.frame.append(box_coords[2])
+        self.frame.append(box_coords[2])
+        self.frame.append(box_coords[3])
+        self.frame.append(box_coords[3])
+        self.frame.append(box_coords[0])
+
+        self.frame.append(box_coords[4])
+        self.frame.append(box_coords[5])
+        self.frame.append(box_coords[5])
+        self.frame.append(box_coords[6])
+        self.frame.append(box_coords[6])
+        self.frame.append(box_coords[7])
+        self.frame.append(box_coords[7])
+        self.frame.append(box_coords[4])
+
+        self.frame.append(box_coords[4])
+        self.frame.append(box_coords[0])
+        self.frame.append(box_coords[5])
+        self.frame.append(box_coords[1])
+        self.frame.append(box_coords[6])
+        self.frame.append(box_coords[2])
+        self.frame.append(box_coords[7])
+        self.frame.append(box_coords[3])
+
+
+        self.frame_colours = box_colour*72  
+        
+        self.frame = -np.array(self.frame)
+        self.frame_colours = np.array(self.frame_colours)
+
+
 
     def initialize(self):
         self.app = QtGui.QApplication(sys.argv)

@@ -51,7 +51,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.segments_colours = vis.segments_colours
         self.triangle_points = vis.triangle_points
         self.triangle_colours = vis.triangle_colours
-
+        self.layers = vis.layers
+        self.layers_colours = vis.layers_colours
+        self.frame = vis.frame
+        self.frame_colours = vis.frame_colours
 
         format = QtOpenGL.QGLFormat()
         
@@ -138,8 +141,12 @@ class GLWidget(QtOpenGL.QGLWidget):
         #GL.glVertexPointerf(cells.points_seg) # float32
 
         #Plot layer planes
-        if False:
-            glColorPointerub(self.colours_layers) # unsigned byte, ie uint8
+        if len(self.layers)>0:
+            #glColorPointerub(self.layers_colors) # unsigned byte, ie uint8
+            #glVertexPointerf(self.layers) # float32
+            #glDrawArrays(GL_QUADS, 0, len(self.layers)*4)
+            
+            glColorPointerub(self.layers_colours) # unsigned byte, ie uint8
             glVertexPointerf(self.layers) # float32
             glDrawArrays(GL_TRIANGLES, 0, len(self.layers))
 
@@ -177,17 +184,18 @@ class GLWidget(QtOpenGL.QGLWidget):
         #if False:
             glColorPointerub(self.triangle_colours) # unsigned byte, ie uint8
             glVertexPointerf(self.triangle_points) # float32
-            glDrawArrays(GL_TRIANGLES, 0, len(self.triangle_points)*3)
+            glDrawArrays(GL_TRIANGLES, 0, len(self.triangle_points)*3)  #NOT SURE WHY 3 IS HERE
 
 
         #Cortical frame + patch box
         #if self.plot_frame==1:
-        if False:
-            
-            glColorPointerub(self.colours_frame) # unsigned byte, ie uint8
-            glVertexPointerf(self.points_frame) # float32
-            glDrawArrays(GL_LINES, 0, len(self.points_frame))
+        if len(self.frame)>0:
+            glColorPointerub(self.frame_colours) # unsigned byte, ie uint8
+            glVertexPointerf(self.frame) # float32
+            glDrawArrays(GL_LINES, 0, len(self.frame))
 
+
+        if False:
             #PLOT Axis tick values
             glColor3ub(255, 255, 255)
             self.renderText (550,0,500, "0.0 um")
@@ -254,9 +262,13 @@ class GLWidget(QtOpenGL.QGLWidget):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
+        print width, height
         # fov (deg) controls amount of perspective, and as a side effect initial apparent size
-        gluPerspective(45, width/height, 0.1, 100000.) # fov, aspect, nearz & farz
+        gluPerspective(45, float(width)/height, 0.1, 100000.) # fov, aspect, nearz & farz
                                                            # clip planes
+        #gluPerspective(45, 2.0, 0.1, 100000.) # fov, aspect, nearz & farz
+                                                           # clip planes
+
         glMatrixMode(GL_MODELVIEW)
     
 
