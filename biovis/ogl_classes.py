@@ -95,25 +95,25 @@ class GLWidget(QtOpenGL.QGLWidget):
         #GL.glEnable(GL.GL_POINT_SMOOTH) # doesn't seem to work right, proper way to antialiase?
         #GL.glEnable(GL.GL_LINE_SMOOTH) # works better
         #GL.glPointSize(1.5) # truncs to the nearest pixel if antialiasing is off
-        #GL.glShadeModel(GL.GL_FLAT)
-        #GL.glEnable(GL.GL_CULL_FACE) # only useful for solids
+        #glShadeModel(GL_FLAT)
+        #glEnable(GL_CULL_FACE) # only useful for solids
         glTranslate(0, 750, -3000) # init camera distance from origin
 
 
 
-        #GL.glEnable(GL_LIGHTING)
-        #GL.glEnable(GL_LIGHTING)
-        #GL.glEnable(GL_LIGHT0)
+        #glEnable(GL_LIGHTING)
+        #glEnable(GL_LIGHTING)
+        #glEnable(GL_LIGHT0)
         
-        #lightpos = [1.,1.,1., 0.]
-        #GL.glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
+        #lightpos = [1000.,0.,0., 1.]
+        #glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
 
         #white = [0.8, 0.8, 0.8, 1.0]
         #cyan = [0., .8, .8, 1.]
         #GL.glMaterialfv(GL.GL_FRONT, GL_DIFFUSE, cyan)
         #GL.glMaterialfv(GL.GL_FRONT, GL_SPECULAR, white)
-        #shininess = [50]
-        #GL.glMaterialfv(GL.GL_FRONT, GL_SHININESS, shininess)
+        #shininess = [500]
+        #glMaterialfv(GL_FRONT, GL_SHININESS, shininess)
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

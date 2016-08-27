@@ -46,6 +46,8 @@ class Biovis(object):
         self.triangle_colours=[]
         self.layers = []
         self.layers_colours = []
+        self.frame = []
+        self.frame_colours = []
 
     def load_selection_dendrites(self, cells_select_df):
         
@@ -148,14 +150,17 @@ class Biovis(object):
                                              ])
 
                                     
-                #color_factor = ((self.lowest_vertex_triangle[j])+2.)/4. #Cat: take z direction and normalize
+                color_factor = ((self.lowest_vertex_triangle[j])+2.)/4. #Cat: take z direction and normalize
                 #self.triangle_colours.append([[int(CMAP[gid%10][0]*color_factor),
                 #                                int(CMAP[gid%10][1]*color_factor),
                 #                                int(CMAP[gid%10][2]*color_factor)
                 #                                ]]*3)
                  
                 for k in range(3):
-                    self.triangle_colours.append([255, 0, 0])
+                    self.triangle_colours.append([int(CMAP[gid%10][0]*color_factor),
+                                                  int(CMAP[gid%10][1]*color_factor),
+                                                  int(CMAP[gid%10][2]*color_factor)
+                                                  ])
         
         
         self.triangle_points = np.array(self.triangle_points) #*1E3
