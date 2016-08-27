@@ -25,7 +25,7 @@ def load_nodes(cells_file_name, cell_models_file_name):
     cm_df.set_index('model_id',inplace=True)
 
     ncells = len(c_df.index) # total number of simulated cells
-    print "...total cells: ", ncells
+    print "...total # cells simulated: ", ncells
 
     cells_prop_df = pd.merge(left=c_df,
                             right=cm_df, 
@@ -33,7 +33,7 @@ def load_nodes(cells_file_name, cell_models_file_name):
                             left_on='model_id', 
                             right_index=True) # use 'model_id' key to merge, for right table the "model_id" is an index
     
-    return cm_df
+    return cm_df, cells_prop_df
 
 #def load_morph_segs(file_name_morph)
 #

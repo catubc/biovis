@@ -47,8 +47,11 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.axes = 'both' # display both mini and focal xyz axes by default
         self.background = vis.background
 
-        self.segments = vis.dendrites_1D
-        self.segments_colours = vis.dendrites_1D_colours
+        self.segments = vis.segments
+        self.segments_colours = vis.segments_colours
+        self.triangle_points = vis.triangle_points
+        self.triangle_colours = vis.triangle_colours
+
 
         format = QtOpenGL.QGLFormat()
         
@@ -170,8 +173,8 @@ class GLWidget(QtOpenGL.QGLWidget):
             
 
         #************** Plots somas ************
-        #if self.plot_soma==1:
-        if False:
+        if len(self.triangle_points)>0:
+        #if False:
             glColorPointerub(self.triangle_colours) # unsigned byte, ie uint8
             glVertexPointerf(self.triangle_points) # float32
             glDrawArrays(GL_TRIANGLES, 0, len(self.triangle_points)*3)
