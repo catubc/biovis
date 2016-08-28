@@ -6,7 +6,9 @@
 import sip
 sip.setapi('QString', 2) #Sets the qt string to native python strings so can be read without weird stuff
 
-from PyQt4 import QtGui 
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+#from PyQt4 import QtGui 
 import sys, math, csv
 
 from ogl_classes import *
@@ -40,7 +42,9 @@ class Biovis(object):
 
     def __init__(self):
 
-        self.segments = [] #Initialize to empty lists just to test later; NOT NECESSARY/REMOVE LATER
+        self.background='black'         #Default background
+
+        self.segments = []              #Initialize to empty lists just to test later; THIS IS STILL A BIT OF A CRUTCH - REMOVE EVENTUALLY
         self.segments_colours = []
         self.triangle_points=[]
         self.triangle_colours=[]
@@ -49,7 +53,10 @@ class Biovis(object):
         self.frame = []
         self.frame_colours = []
 
-    def load_selection_dendrites(self, cells_select_df):
+        self.initialize()       #Start the opengl app, do not run/display it yet
+
+
+    def load_selected_dendrites(self, cells_select_df):
         
         #RotX = np.array([[1, 0, 0],    # rotate around x axis      #Cat: NOT USED
         #             [0, 0, 1],
@@ -98,7 +105,7 @@ class Biovis(object):
         print "... done all ..."
 
 
-    def load_selection_somas(self, cells_select_df):
+    def load_selected_somas(self, cells_select_df):
 
         self.load_soma_sphere()    #Open sphere primitive
     
@@ -293,9 +300,35 @@ class Biovis(object):
 
 
     def initialize(self):
-        self.app = QtGui.QApplication(sys.argv)
+        print "... initializing ..."
+        self.app = QApplication(sys.argv)
         self.GUI = GLWindow(self)
-        
+
 
     def show(self):   #Show
-        sys.exit(self.app.exec_())
+        print "... showing ..."
+        #sys.exit(self.app.exec_())     
+        self.app.exec_()
+                
+    def restart(self):   #Restarts widget
+        print "...restarting ..."
+        self.GUI = GLWindow(self)
+        self.app.exec_()
+
+    def update(self):  
+        """ update function should work dynamically;
+            possibly through connectors; example is provided for slider
+            not implemented yet
+        """
+        
+        pass
+        
+        #slider=QSlider(Qt.Horizontal)
+        #QObject.connect(slider,SIGNAL("valueChanged(int)"),self.printNumber)
+        #slider.show()
+
+        #sys.exit(self.app.exec_())
+        #self.app.exec_()
+
+    def printNumber(number):
+        print number

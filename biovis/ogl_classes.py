@@ -31,12 +31,8 @@ class GLWindow(QtGui.QWidget):
         self.setLayout(mainLayout)
         self.setWindowTitle(self.tr("Biovis"))
 
-        ##Default: don't plot segments or somas
-        #self.glWidget.plot_seg=0
-        #self.glWidget.plot_soma=0
-        #self.glWidget.plot_frame=1
-        
         self.show()
+
 
 class GLWidget(QtOpenGL.QGLWidget):
     
@@ -75,8 +71,24 @@ class GLWidget(QtOpenGL.QGLWidget):
         colormap.setEntries(cmap)
         self.setColormap(colormap)
         '''
-
-
+        
+    #def reloadGL(self, vis):
+        
+        #print "...reloading GL widget..."
+        
+        #self.segments = vis.segments
+        #self.segments_colours = vis.segments_colours
+        #self.triangle_points = vis.triangle_points
+        #self.triangle_colours = vis.triangle_colours
+        #self.layers = vis.layers
+        #self.layers_colours = vis.layers_colours
+        #self.frame = vis.frame
+        #self.frame_colours = vis.frame_colours
+        
+        #self.initializeGL()
+        #self.updateGL()
+        #self.paintGL()
+        
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
 
@@ -87,8 +99,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         if self.background=='black': glClearColor(0.0, 0.0, 0.0, 1.0) # Black / White toggle switch
         if self.background=='white': glClearColor(1.0, 1.0, 1.0, 1.0)
-
-        print self.background
 
         glClearDepth(10.0) # same as default
         glEnable(GL_DEPTH_TEST) # display points according to occlusion, not order of plotting
@@ -262,7 +272,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        print width, height
         # fov (deg) controls amount of perspective, and as a side effect initial apparent size
         gluPerspective(45, float(width)/height, 0.1, 100000.) # fov, aspect, nearz & farz
                                                            # clip planes
