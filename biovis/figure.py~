@@ -1,0 +1,48 @@
+
+import sip
+
+class Figure(object):
+    '''
+	Main API functions
+    '''
+
+
+
+    def __init__(self):
+        print "... initializing ..."
+#        self.app = QApplication(sys.argv)	# not sure where these are loaded from, need to specify an explicit import
+#        self.GUI = GLWindow(self)
+
+
+    def show(self):   #Show
+        print "... showing ..."
+        #sys.exit(self.app.exec_())     
+        self.app.exec_()
+                
+    def restart(self):   #Restarts widget
+        print "...restarting ..."
+        self.GUI = GLWindow(self)
+        self.app.exec_()
+
+	def set_bgcolor(self, color='white'):
+		print "set background color"
+		pass
+
+	def set_layers(self, depth=layer_depth,color=layer_color):
+		pass
+
+	def plot_somata(self, nodes=selected_nodes_df):
+		'''
+		plot somata		
+		'''
+		pass
+
+ 
+	def plot_morph3d(self, nodes=nodes,morph=morph):
+		'''
+		plot morhological details of cells	
+		'''
+		pass
+
+	def set_title(self, title):
+		pass
