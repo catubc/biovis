@@ -1,5 +1,7 @@
-""" netgraph module
-"""
+#Visualization toolbox 
+#Created for Allen Institute - Modelling, Analysis and Theory biophysically detailed network models
+#Authors: Catalin Mitelut, Sergey Gratiy
+#MIT License
 
 import os
 import numpy as np
@@ -26,7 +28,8 @@ DARK_GREY = 30, 30, 30
 PURPLE = 154, 44, 209
 CMAP = np.array([RED, ORANGE, YELLOW, GREEN, CYAN, LIGHTBLUE, BLUE, VIOLET, MAGENTA,
                  GREY, WHITE, PURPLE], dtype=np.uint8)
-                 
+
+
 #********************************************************************
 
 def load_nodes(cells_file_name, cell_models_file_name):
@@ -203,7 +206,7 @@ def plot_somas(cells_select_df, morphologies):
 def load_soma_sphere():     
 
     #Load sphere vertices
-    f = open('biovis/sphere_vertices.csv', 'rt')
+    f = open('static/sphere_vertices.csv', 'rt')
     vertices_list = list(csv.reader(f))
     f.close()
     vertices = []
@@ -211,7 +214,7 @@ def load_soma_sphere():
         vertices.append([float(row[0].split(" ")[1]), float(row[0].split(" ")[2]), float(row[0].split(" ")[3])])
     
     #Load sphere faces
-    f = open('biovis/sphere_faces.csv', 'rt')
+    f = open('static/sphere_faces.csv', 'rt')
     face_list = list(csv.reader(f))
     f.close()
     triangle_faces=[]

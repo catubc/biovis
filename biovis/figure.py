@@ -1,6 +1,10 @@
+#Visualization toolbox 
+#Created for Allen Institute - Modelling, Analysis and Theory biophysically detailed network models
+#Authors: Catalin Mitelut, Sergey Gratiy
+#MIT License
+
 import sys
 from PyQt4.QtGui import QApplication
-#from PyQt4.QtCore import *
 from glwindow import GLWindow
 
 import netgraph as ng       #Sergey's dataframe loading modules
@@ -67,9 +71,11 @@ class Figure(object):
     def clear(self):
         self.set_defaults()
 
+
     def set_title(self, title):
         print title
         pass
+
 
     def show(self):   #Show
         
