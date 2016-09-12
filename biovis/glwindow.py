@@ -5,10 +5,14 @@
 
 import numpy as np
 
-from PyQt4 import QtGui, QtCore, QtOpenGL   #QtOpenGL installs via "sudo apt-get install python-qt4-gl"
-from OpenGL.GL import *                     #OpenGL installs in ubuntu via "sudo pip install PyOpenGL PyOpenGL_accelerate"
+#from PyQt4 import QtGui, QtCore, QtOpenGL   #QtOpenGL installs via "sudo apt-get install python-qt4-gl"
+#import OpenGL.GL as GL                      #OpenGL installs in ubuntu via "sudo pip install PyOpenGL PyOpenGL_accelerate"
                                             #Cat: will work on this being explicit rather than wildcard...
-from OpenGL.GLU import gluPerspective       #only used in one location... not clear if necessary
+#from OpenGL.GLU import gluPerspective       #only used in one location... not clear if necessary
+
+from PyQt4 import QtCore, QtGui, QtOpenGL
+from PyQt4.QtCore import Qt
+from OpenGL import GL, GLU
 
 
 class GLWindow(QtGui.QWidget):
@@ -96,23 +100,24 @@ class GLWidget(QtOpenGL.QGLWidget):
 
     def initializeGL(self):
         
-        if self.background=='black': glClearColor(0.0, 0.0, 0.0, 1.0) # Black / White toggle switch
-        if self.background=='white': glClearColor(1.0, 1.0, 1.0, 1.0)
+        if self.background=='black': GL.glClearColor(0.0, 0.0, 0.0, 1.0) # Black / White toggle switch
+        if self.background=='white': GL.glClearColor(1.0, 1.0, 1.0, 1.0)
 
-        glClearDepth(10.0) # same as default
-        glEnable(GL_DEPTH_TEST) # display points according to occlusion, not order of plotting
+        GL.glClearDepth(10.0) # same as default
+        GL.glEnable(GL.GL_DEPTH_TEST) # display points according to occlusion, not order of plotting
         #GL.glEnable(GL.GL_POINT_SMOOTH) # doesn't seem to work right, proper way to antialiase?
         #GL.glEnable(GL.GL_LINE_SMOOTH) # works better
         #GL.glPointSize(1.5) # truncs to the nearest pixel if antialiasing is off
         #glShadeModel(GL_FLAT)
         #glEnable(GL_CULL_FACE) # only useful for solids
-        glTranslate(0, 750, -3000) # init camera distance from origin
+        GL.glTranslate(0, 750, -3000) # init camera distance from origin
 
 
         #glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 
-        glEnable (GL_BLEND)
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        #Modded transparency: blends colours in order they were plotted; otherwise need to use compiled shaders 
+        GL.glEnable (GL.GL_BLEND)
+        GL.glBlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
         #glEnable(GL_LIGHTING)
         #glEnable(GL_LIGHT0)
@@ -128,7 +133,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         #glMaterialfv(GL_FRONT, GL_SHININESS, shininess)
 
     def paintGL(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # Don't load identity matrix. Do all transforms in place against current matrix
         # and take advantage of OpenGL's state-machineness.
@@ -141,8 +146,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         #GLU.gluLookAt()
         #GL.glScale() # modelling transformation, lets you stretch your objects
 
-        glEnableClientState(GL_COLOR_ARRAY);
-        glEnableClientState(GL_VERTEX_ARRAY);
+        GL.glEnableClientState(GL.GL_COLOR_ARRAY);
+        GL.glEnableClientState(GL.GL_VERTEX_ARRAY);
         
         #GL.glEnable(GL_LINE_SMOOTH);
         #GL.glHint(GL_LINE_SMOOTH_HINT,  GL_NICEST);
@@ -153,17 +158,17 @@ class GLWidget(QtOpenGL.QGLWidget):
 
         #Column wire frame
         if len(self.frame)>0:
-            glColorPointerub(self.frame_colours) # unsigned byte, ie uint8
-            glVertexPointerf(self.frame) # float32
-            glDrawArrays(GL_LINES, 0, len(self.frame))
+            GL.glColorPointerub(self.frame_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.frame) # float32
+            GL.glDrawArrays(GL.GL_LINES, 0, len(self.frame))
 
 
 
         #Plot regular segments 0-width
         if len(self.segments)>0:
-            glColorPointerub(self.segments_colours) # unsigned byte, ie uint8
-            glVertexPointerf(self.segments) # float32
-            glDrawArrays(GL_LINES, 0, len(self.segments))
+            GL.glColorPointerub(self.segments_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.segments) # float32
+            GL.glDrawArrays(GL.GL_LINES, 0, len(self.segments))
 
             #glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
             #glVertexPointerf(self.dendrite_quads) # float32
@@ -173,18 +178,18 @@ class GLWidget(QtOpenGL.QGLWidget):
 
         #Plots somas 
         if len(self.sphere_points)>0:
-            glColorPointerub(self.sphere_colours) # unsigned byte, ie uint8
-            glVertexPointerf(self.sphere_points) # float32
-            glDrawArrays(GL_TRIANGLES, 0, len(self.sphere_points)*3)  #NOT SURE WHY 3 IS HERE
+            GL.glColorPointerub(self.sphere_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.sphere_points) # float32
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, len(self.sphere_points)*3)  #NOT SURE WHY 3 IS HERE
 
 
 
         #Plot electrode
         if False:
-            glColorPointerub(self.colours_electrode) # unsigned byte, ie uint8
-            glVertexPointerf(self.electrode) # float32
-            glDrawArrays(GL_TRIANGLES, 0, len(self.electrode))
-            glColor3ub(255, 255, 255)
+            GL.glColorPointerub(self.colours_electrode) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.electrode) # float32
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, len(self.electrode))
+            GL.glColor3ub(255, 255, 255)
             self.renderText (-10*len(self.probe_name),220,0, self.probe_name)
 
 
@@ -245,7 +250,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         #print self.points
 
         if self.axes: # paint xyz axes
-            glClear(GL_DEPTH_BUFFER_BIT) # make axes paint on top of data points
+            GL.glClear(GL.GL_DEPTH_BUFFER_BIT) # make axes paint on top of data points
             #if self.axes in ['both', 'mini']:
             self.paint_mini_axes()
             #if self.axes in ['both', 'focal']:
@@ -264,10 +269,11 @@ class GLWidget(QtOpenGL.QGLWidget):
             #glDrawArrays(GL_QUADS, 0, len(self.layers)*4)
             
             
-            glColorPointerub(self.layers_colours) # unsigned byte, ie uint8
-            glVertexPointerf(self.layers) # float32
-            glDrawArrays(GL_TRIANGLES, 0, len(self.layers))
-            
+            GL.glColorPointerub(self.layers_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.layers) # float32
+            GL.glDrawArrays(GL.GL_TRIANGLES, 0, len(self.layers))
+
+
             #glColorPointerub(self.layers_colours) # unsigned byte, ie uint8
             #glVertexPointerf(self.layers) # float32
             #glDrawArrays(GL_TRIANGLES, 0, len(self.layers))
@@ -285,33 +291,33 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 
     def resizeGL(self, width, height):
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
+        GL.glViewport(0, 0, width, height)
+        GL.glMatrixMode(GL.GL_PROJECTION)
+        GL.glLoadIdentity()
         # fov (deg) controls amount of perspective, and as a side effect initial apparent size
-        gluPerspective(45, float(width)/height, 0.1, 100000.) # fov, aspect, nearz & farz
+        GLU.gluPerspective(45, float(width)/height, 0.1, 100000.) # fov, aspect, nearz & farz
                                                            # clip planes
         #gluPerspective(45, 2.0, 0.1, 100000.) # fov, aspect, nearz & farz
                                                            # clip planes
 
-        glMatrixMode(GL_MODELVIEW)
+        GL.glMatrixMode(GL.GL_MODELVIEW)
     
 
     def paint_mini_axes(self):
         """Paint mini xyz axes in bottom left of widget"""
         w, h = self.width(), self.height()
         vt = self.getTranslation() # this is in eye coordinates
-        glViewport(0, 0, w//4, h//4) # mini viewport at bottom left of widget
+        GL.glViewport(0, 0, w//4, h//4) # mini viewport at bottom left of widget
         self.setTranslation((-1, -.5, -3)) # draw in center of this mini viewport
         self.paint_axes()
         self.setTranslation(vt) # restore translation vector to MV matrix
-        glViewport(0, 0, w, h) # restore full viewport
+        GL.glViewport(0, 0, w, h) # restore full viewport
 
     def paint_focal_axes(self):
         """Paint xyz axes proportional in size to sigma, at focus"""
-        glTranslate(*self.focus) # translate to focus
+        GL.glTranslate(*self.focus) # translate to focus
         #self.paint_axes(self.sigma)
-        glTranslate(*-self.focus) # translate back
+        GL.glTranslate(*-self.focus) # translate back
 
     def update_focal_axes(self):
         """Called every time sigma is changed in main spyke window"""
@@ -320,24 +326,24 @@ class GLWidget(QtOpenGL.QGLWidget):
 
     def paint_axes(self, l=1):
         """Paint axes at origin, with lines of length l"""
-        glBegin(GL_LINES)
-        glColor3f(1, 0, 0) # red x axis
-        glVertex3f(0, 0, 0)
-        glVertex3f(l, 0, 0)
-        glColor3f(0, 1, 0) # green y axis
-        glVertex3f(0, 0, 0)
-        glVertex3f(0, l, 0)
-        glColor3f(0, 0, 1) # blue z axis
-        glVertex3f(0, 0, 0)
-        glVertex3f(0, 0, l)
-        glEnd()
+        GL.glBegin(GL.GL_LINES)
+        GL.glColor3f(1, 0, 0) # red x axis
+        GL.glVertex3f(0, 0, 0)
+        GL.glVertex3f(l, 0, 0)
+        GL.glColor3f(0, 1, 0) # green y axis
+        GL.glVertex3f(0, 0, 0)
+        GL.glVertex3f(0, l, 0)
+        GL.glColor3f(0, 0, 1) # blue z axis
+        GL.glVertex3f(0, 0, 0)
+        GL.glVertex3f(0, 0, l)
+        GL.glEnd()
 
     def get_MV(self):
         """Return modelview matrix"""
-        return glGetDoublev(GL_MODELVIEW_MATRIX) # I think this acts like a copy
+        return GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX) # I think this acts like a copy
 
     def set_MV(self, MV):
-        glLoadMatrixd(MV)
+        GL.glLoadMatrixd(MV)
 
     MV = property(get_MV, set_MV)
 
@@ -374,38 +380,38 @@ class GLWidget(QtOpenGL.QGLWidget):
         d = self.getDistance()
         vr = self.getViewRight()
         vr *= dx*d
-        glTranslate(vr[0], vr[1], vr[2])
+        GL.glTranslate(vr[0], vr[1], vr[2])
         vu = self.getViewUp()
         vu *= dy*d
-        glTranslate(vu[0], vu[1], vu[2])
+        GL.glTranslate(vu[0], vu[1], vu[2])
 
     def zoom(self, dr):
         """Translate along view normal vector"""
         d = self.getDistance()
         vn = self.getViewNormal()
         vn *= dr*d
-        glTranslate(vn[0], vn[1], vn[2])
+        GL.glTranslate(vn[0], vn[1], vn[2])
 
     def pitch(self, dangle): # aka elevation
         """Rotate around view right vector"""
         vr = self.getViewRight()
-        glTranslate(*self.focus)
-        glRotate(dangle, *vr)
-        glTranslate(*-self.focus)
+        GL.glTranslate(*self.focus)
+        GL.glRotate(dangle, *vr)
+        GL.glTranslate(*-self.focus)
 
     def yaw(self, dangle): # aka azimuth
         """Rotate around view up vector"""
         vu = self.getViewUp()
-        glTranslate(*self.focus)
-        glRotate(dangle, *vu)
-        glTranslate(*-self.focus)
+        GL.glTranslate(*self.focus)
+        GL.glRotate(dangle, *vu)
+        GL.glTranslate(*-self.focus)
 
     def roll(self, dangle):
         """Rotate around view normal vector"""
         vn = self.getViewNormal()
-        glTranslate(*self.focus)
-        glRotate(dangle, *vn)
-        glTranslate(*-self.focus)
+        GL.glTranslate(*self.focus)
+        GL.glRotate(dangle, *vn)
+        GL.glTranslate(*-self.focus)
 
     def panTo(self, p=None):
         """Translate along view right and view up vectors such that data point p is

@@ -8,6 +8,7 @@ from PyQt4.QtGui import QApplication
 from glwindow import GLWindow
 
 import netgraph as ng       #Sergey's dataframe loading modules
+import transformer as tr    #functions to load data into opengl-ready arrays
 
 class Figure(object):
     '''
@@ -42,29 +43,29 @@ class Figure(object):
         print "...setting frame..."
 
         if frame == []: self.frame = []; self.frame_colours = []                #Reset somas
-        else: self.frame, self.frame_colours = ng.load_frame(frame, frame_colours)
+        else: self.frame, self.frame_colours = tr.load_frame(frame, frame_colours)
                         
 
     def set_layers(self, layer_depths, layer_colours, layer_alpha):
         print "...setting layers..."
 
         if layer_depths == []: self.layers = []; self.layers_colours = []       #Reset morphs
-        else: self.layers, self.layers_colours = ng.load_layers(layer_depths, layer_colours, layer_alpha)
+        else: self.layers, self.layers_colours = tr.load_layers(layer_depths, layer_colours, layer_alpha)
 
 
     def plot_somas(self, cells_select_df, morphologies):
 
-        self.sphere_points, self.sphere_colours = ng.plot_somas(cells_select_df, morphologies)
+        self.sphere_points, self.sphere_colours = tr.plot_somas(cells_select_df, morphologies)
  
  
     def plot_morph(self, cells_select_df, morphologies):
         
-        self.segments, self.segments_colours = ng.plot_morphologies(cells_select_df, morphologies)
+        self.segments, self.segments_colours = tr.plot_morphologies(cells_select_df, morphologies)
         
 
     def plot_presynaptic_somas(self, cells_select_df, morphologies):
         
-        self.sphere_points, self.sphere_colours = ng.plot_somas(cells_select_df, morphologies)
+        self.sphere_points, self.sphere_colours = tr.plot_somas(cells_select_df, morphologies)
         
         
 
