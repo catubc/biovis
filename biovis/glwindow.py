@@ -65,10 +65,10 @@ class GLWidget(QtOpenGL.QGLWidget):
     def load_data_from_fig(self, fig):
 
         self.background = fig.background
-        self.segments = fig.segments
-        self.segments_colours = fig.segments_colours
-        self.sphere_points = fig.sphere_points
-        self.sphere_colours = fig.sphere_colours
+        self.segments = np.array(fig.segments)
+        self.segments_colours = np.array(fig.segments_colours)
+        self.sphere_points = np.array(fig.sphere_points)
+        self.sphere_colours = np.array(fig.sphere_colours)
         self.layers = fig.layers
         self.layers_colours = fig.layers_colours
         self.frame = fig.frame

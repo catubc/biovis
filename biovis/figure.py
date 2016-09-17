@@ -8,7 +8,7 @@ from PyQt4.QtGui import QApplication
 from glwindow import GLWindow
 
 import netgraph as ng       #Sergey's dataframe loading modules
-import transformer as tr    #functions to load data into opengl-ready arrays
+import artist as art    #functions to load data into opengl-ready arrays
 
 class Figure(object):
     '''
@@ -43,30 +43,31 @@ class Figure(object):
         print "...setting frame..."
 
         if frame == []: self.frame = []; self.frame_colours = []                #Reset somas
-        else: self.frame, self.frame_colours = tr.load_frame(frame, frame_colours)
+        else: self.frame, self.frame_colours = art.construct_frame(frame, frame_colours)
                         
 
     def set_layers(self, layer_depths, layer_colours, layer_alpha):
         print "...setting layers..."
 
         if layer_depths == []: self.layers = []; self.layers_colours = []       #Reset morphs
-        else: self.layers, self.layers_colours = tr.load_layers(layer_depths, layer_colours, layer_alpha)
+        else: self.layers, self.layers_colours = art.construct_layers(layer_depths, layer_colours, layer_alpha)
 
 
-    def plot_somas(self, cells_select_df, morphologies):
+    def plot_somas(self, cells_select_df, morphologies, cmap,color_label):
 
-        self.sphere_points, self.sphere_colours = tr.plot_somas(cells_select_df, morphologies)
+        sphere_points, sphere_colours = art.construct_somas(cells_select_df, morphologies, cmap,color_label)
+        self.sphere_points.extend(sphere_points)
+        self.sphere_colours.extend(sphere_colours)
+
+
+#        print 'self.sphere_points', self.sphere_points.shape 
  
- 
-    def plot_morph(self, cells_select_df, morphologies):
+    def plot_morph(self, cells_select_df, morphologies,cmap,color_labels):
         
-        self.segments, self.segments_colours = tr.plot_morphologies(cells_select_df, morphologies)
-        
+        segments, segments_colours = art.construct_morphologies(cells_select_df, morphologies,cmap,color_labels)
+        self.segments.extend(segments)
+        self.segments_colours.extend(segments_colours)
 
-    def plot_presynaptic_somas(self, cells_select_df, morphologies):
-        
-        self.sphere_points, self.sphere_colours = tr.plot_somas(cells_select_df, morphologies)
-        
         
 
     def clear(self):
