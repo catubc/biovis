@@ -35,15 +35,8 @@ def construct_morphologies(cells_select_df, morphologies, cmap,color_label):
         
         segments.extend(tot_segs)
         color = cmap_rgb[cell_prop[color_label]]
-#        print color, color_label
         cell_seg_colors = [color]*len(tot_segs)
         segments_colours.extend(cell_seg_colors)
-#        for k in range(len(tot_segs)):     #should do this in one step...
-#            segments_colours.append(color)
-
-
-#    for k in range(len(segments)):     #should do this in one step...
-#        segments_colours.append(color)
         
     print "ready to display 3d segments!"
 
@@ -76,38 +69,55 @@ def construct_somas(cells_select_df, soma_sizes, cmap, color_label):
         radius = 0.5*soma_sizes[model_id]       
         color = cmap_rgb[cell_prop[color_label]]
 
-        #Make triangle surfaces:
-        for j in range(len(triangle_faces)):
-            sphere_points.append([[vertices[int(triangle_faces[j][0])-1][0]*radius+soma_centre[0],
-                                        vertices[int(triangle_faces[j][0])-1][1]*radius+soma_centre[1]-radius,
-                                        vertices[int(triangle_faces[j][0])-1][2]*radius+soma_centre[2]],
-                                        
-                                         [vertices[int(triangle_faces[j][1])-1][0]*radius+soma_centre[0], 
-                                        vertices[int(triangle_faces[j][1])-1][1]*radius+soma_centre[1]-radius, 
-                                        vertices[int(triangle_faces[j][1])-1][2]*radius+soma_centre[2]], 
-                                        
-                                         [vertices[int(triangle_faces[j][2])-1][0]*radius+soma_centre[0],
-                                         vertices[int(triangle_faces[j][2])-1][1]*radius+soma_centre[1]-radius,
-                                         vertices[int(triangle_faces[j][2])-1][2]*radius+soma_centre[2]]                                             
-                                         ])
 
-                                
-            color_factor = ((lowest_vertex_triangle[j])+2.)/4. #Cat: take z direction and normalize
+        sphere1_points,sphere1_colours = construct_sphere(radius,soma_centre,color)
 
-            for k in range(3):
-                sphere_colours.append([int(color[0]*color_factor),
-                                              int(color[1]*color_factor),
-                                              int(color[2]*color_factor)
-                                              ])
+        sphere_points.extend(sphere1_points)
+        sphere_colours.extend(sphere1_colours)
+
 
     print "ready to display!"
     
-    
-
     return sphere_points, sphere_colours
 
 
 
+def construct_sphere(radius, soma_centre,color):
+    '''
+        #SLG: please optimize
+    '''
+    sphere1_points = []
+    sphere1_colours =[]
+
+    vertices = prim.sphere['vertice']
+    triangle_faces = prim.sphere['triangle_faces']
+    lowest_vertex_triangle = prim.sphere['lowest_vertex_triangle']
+
+
+    for j in range(len(triangle_faces)):
+        sphere1_points.append([[vertices[int(triangle_faces[j][0])-1][0]*radius+soma_centre[0],
+                                    vertices[int(triangle_faces[j][0])-1][1]*radius+soma_centre[1]-radius,
+                                    vertices[int(triangle_faces[j][0])-1][2]*radius+soma_centre[2]],
+                                       
+                                     [vertices[int(triangle_faces[j][1])-1][0]*radius+soma_centre[0], 
+                                    vertices[int(triangle_faces[j][1])-1][1]*radius+soma_centre[1]-radius, 
+                                    vertices[int(triangle_faces[j][1])-1][2]*radius+soma_centre[2]], 
+                                       
+                                     [vertices[int(triangle_faces[j][2])-1][0]*radius+soma_centre[0],
+                                     vertices[int(triangle_faces[j][2])-1][1]*radius+soma_centre[1]-radius,
+                                     vertices[int(triangle_faces[j][2])-1][2]*radius+soma_centre[2]]                                             
+                                     ])
+
+        color_factor = ((lowest_vertex_triangle[j])+2.)/4. #Cat: take z direction and normalize
+
+        for k in range(3):
+            sphere1_colours.append([int(color[0]*color_factor),
+                                        int(color[1]*color_factor),
+                                        int(color[2]*color_factor)
+                                        ])
+
+
+    return sphere1_points,sphere1_colours
 
 
 def construct_layers(layer_depths, layer_colors, layer_alpha):

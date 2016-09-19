@@ -2,7 +2,6 @@
 import numpy as np
 
 #*** BASIC COLOUR DICTIONARY ******
-
 RED = 255, 0, 0
 ORANGE = 255, 127, 0
 YELLOW = 255, 255, 0
@@ -42,8 +41,9 @@ def construct_colors():
     '''
     colors_ = list(six.iteritems(colors.cnames))
     colors_tup = [(color[0],colors.hex2color(color[1])) for color in colors_]
-    colors_dict = dict(colors_tup) # name > rgb conversion
+    colors_dict = dict(colors_tup) # name-to-rgb conversion
     colors_lib = {}
+
     for col,rgb_float in colors_dict.items():
        rgb_int = int(255*rgb_float[0]),int(255*rgb_float[1]),int(255*rgb_float[2])
        colors_lib[col]=rgb_int
@@ -51,9 +51,10 @@ def construct_colors():
     return colors_lib
 
 
-def convert_to_rgb(mymap): # convert color names to rgb expressed using 0..255
-
+def convert_to_rgb(mymap): 
     '''
+    Convert names from a specific colormap to rgb expressed using 0..255
+
     Parameters:
     ----------
     mymap: dict
@@ -66,7 +67,7 @@ def convert_to_rgb(mymap): # convert color names to rgb expressed using 0..255
 
     cmap_rgb = {}
     for label,col_name in mymap.items(): # convert my color_names to rgb
-       cmap_rgb[label]=colors_lib[col_name]
+       cmap_rgb[label] = colors_lib[col_name]
 
     return cmap_rgb
 
