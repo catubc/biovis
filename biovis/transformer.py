@@ -20,7 +20,7 @@ def rotation_matrix( axis, theta):
 
 
 
-def get_segs(morphology,cell_prop):
+def compute_segs(morphology,cell_prop):
 
     x_soma = cell_prop['x_soma'] # needed to do those in sequence because Series did not inherite the dtype from DataFrame 
     y_soma = cell_prop['y_soma'] # need to look for a more elegant solution to this 

@@ -14,13 +14,14 @@ import transformer as tr
 
 import cmaps as cm
 
-def construct_morphologies(cells_select_df, morphologies, cmap,color_label):
+def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
     
 
     segments = []  #collect all segments; convert to numpy afterwards
+    segments_colours = []
+
     print "... processing cell: ",
     cell_counter = 0
-    segments_colours = []
     cmap_rgb = cm.convert_to_rgb(cmap)
 
     for gid, cell_prop in cells_select_df.iterrows():  
@@ -28,31 +29,43 @@ def construct_morphologies(cells_select_df, morphologies, cmap,color_label):
         if cell_counter%100==0: print cell_counter,
         model_id =  cell_prop['model_id']	
         morphology = morphologies[model_id]
-        segs_start,segs_end = tr.get_segs(morphology,cell_prop)
+        segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
 
-        tot_segs = np.empty((len(segs_start)*2, 3), dtype=np.float32)
-        tot_segs[::2]=segs_start; tot_segs[1::2]=segs_end
-        
-        segments.extend(tot_segs)
         color = cmap_rgb[cell_prop[color_label]]
-        cell_seg_colors = [color]*len(tot_segs)
-        segments_colours.extend(cell_seg_colors)
+
+        segs_coords,segs_colours = draw_line_segments(segs_start,segs_end,color)
+        segments.extend(segs_coords)
+        segments_colours.extend(segs_colours)
         
     print "ready to display 3d segments!"
 
     return segments, segments_colours
 
 
+def draw_line_segments(segs_start,segs_end,color):
+    '''
+    draw line segments
+    '''
+    segs_coords = np.empty((len(segs_start)*2, 3), dtype=np.float32)
+    segs_coords[::2] = segs_start; segs_coords[1::2] = segs_end
 
-def construct_somas(cells_select_df, soma_sizes, cmap, color_label):
+    segs_colours = [color]*len(segs_coords)
 
-    vertices, triangle_faces, lowest_vertex_triangle = prim.load_soma_sphere()    #Open sphere primitive
+    return segs_coords,segs_colours
+
+
+def draw_somas(cells_select_df, soma_sizes, cmap, color_label):
+
 
     sphere_points=[]
     sphere_colours=[]
 
     cell_counter = 0
     cmap_rgb = cm.convert_to_rgb(cmap)
+
+    biovis_dir = os.path.dirname(prim.__file__)  # path to package
+    
+    sphere_primitive = prim.load_soma_sphere()
 
     print "... processing cell: ",
     for gid, cell_prop in cells_select_df.iterrows():  
@@ -69,30 +82,27 @@ def construct_somas(cells_select_df, soma_sizes, cmap, color_label):
         radius = 0.5*soma_sizes[model_id]       
         color = cmap_rgb[cell_prop[color_label]]
 
-
-        sphere1_points,sphere1_colours = construct_sphere(radius,soma_centre,color)
+        sphere1_points,sphere1_colours = draw_sphere(radius,soma_centre,color,sphere_primitive)
 
         sphere_points.extend(sphere1_points)
         sphere_colours.extend(sphere1_colours)
 
 
-    print "ready to display!"
+    print "ready to display spherical somata!"
     
     return sphere_points, sphere_colours
 
 
 
-def construct_sphere(radius, soma_centre,color):
+def draw_sphere(radius, soma_centre,color,sphere_primitive):
     '''
         #SLG: please optimize
     '''
     sphere1_points = []
     sphere1_colours =[]
 
-    vertices = prim.sphere['vertice']
-    triangle_faces = prim.sphere['triangle_faces']
-    lowest_vertex_triangle = prim.sphere['lowest_vertex_triangle']
 
+    vertices, triangle_faces, lowest_vertex_triangle = sphere_primitive
 
     for j in range(len(triangle_faces)):
         sphere1_points.append([[vertices[int(triangle_faces[j][0])-1][0]*radius+soma_centre[0],
@@ -120,7 +130,7 @@ def construct_sphere(radius, soma_centre,color):
     return sphere1_points,sphere1_colours
 
 
-def construct_layers(layer_depths, layer_colors, layer_alpha):
+def draw_layers(layer_depths, layer_colors, layer_alpha):
     
     layers = []
 
@@ -150,7 +160,7 @@ def construct_layers(layer_depths, layer_colors, layer_alpha):
     return layers, layers_colours
 
 
-def construct_frame(box_coords, box_colour):
+def draw_frame(box_coords, box_colour):
     
     frame = []
     frame.append(box_coords[0])

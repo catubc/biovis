@@ -1,10 +1,9 @@
 import csv
-
+import os
 
 def load_soma_sphere():     
 
-    #Load sphere vertices
-    f = open('static/sphere_vertices.csv', 'rt')
+    f = open('/home/sergeyg/mypy/biovis/biovis/sphere/sphere_vertices.csv', 'rt')
     vertices_list = list(csv.reader(f))
     f.close()
     vertices = []
@@ -12,7 +11,7 @@ def load_soma_sphere():
         vertices.append([float(row[0].split(" ")[1]), float(row[0].split(" ")[2]), float(row[0].split(" ")[3])])
     
     #Load sphere faces
-    f = open('static/sphere_faces.csv', 'rt')
+    f = open('/home/sergeyg/mypy/biovis/biovis/sphere/sphere_faces.csv', 'rt')
     face_list = list(csv.reader(f))
     f.close()
     triangle_faces=[]
@@ -42,10 +41,4 @@ def load_soma_sphere():
     return vertices, triangle_faces, lowest_vertex_triangle
 
 
-vertices, triangle_faces, lowest_vertex_triangle = load_soma_sphere()
-
-sphere={}
-sphere['vertice']=vertices
-sphere['triangle_faces']=triangle_faces
-sphere['lowest_vertex_triangle']=lowest_vertex_triangle
 
