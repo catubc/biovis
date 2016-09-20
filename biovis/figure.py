@@ -50,8 +50,10 @@ class Figure(object):
         print "...setting layers..."
 
         if layer_depths == []: self.layers = []; self.layers_colours = []       #Reset morphs
+#        else: self.layers, self.layers_colours = art.draw_layers(layer_depths, layer_colours, layer_alpha)
         else: self.layers, self.layers_colours = art.draw_layers(layer_depths, layer_colours, layer_alpha)
-
+        
+#        print self.layers, self.layers_colours
 
     def plot_somas(self, cells_select_df, morphologies, cmap,color_label):
 

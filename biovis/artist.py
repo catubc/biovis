@@ -64,8 +64,7 @@ def draw_somas(cells_select_df, soma_sizes, cmap, color_label):
     cmap_rgb = cm.convert_to_rgb(cmap)
 
     biovis_dir = os.path.dirname(prim.__file__)  # path to package
-    
-    sphere_primitive = prim.load_soma_sphere()
+    sphere_primitive = prim.load_soma_sphere(biovis_dir)
 
     print "... processing cell: ",
     for gid, cell_prop in cells_select_df.iterrows():  
@@ -130,11 +129,13 @@ def draw_sphere(radius, soma_centre,color,sphere_primitive):
     return sphere1_points,sphere1_colours
 
 
+
 def draw_layers(layer_depths, layer_colors, layer_alpha):
     
     layers = []
+    color_list = []
+    for depth,color_name in zip(layer_depths,layer_colors):
 
-    for depth in layer_depths:
         vertex_0 = [-500., -depth, 500.]
         vertex_1 = [500., -depth, 500.]
         vertex_2 = [-500., -depth, -500.]
@@ -149,15 +150,17 @@ def draw_layers(layer_depths, layer_colors, layer_alpha):
         layers.append(vertex_3)
         layers.append(vertex_4)
         layers.append(vertex_5)
-            
-    layers_colours = layer_colors * len(layer_depths)*6  #uint8; Need colour for every node, not every vertex; i.e. 2 x no. vertices  
-
+        
+        col_rgb = cm.colors_lib[color_name]
+        color_list.extend([col_rgb]*6)    
+     
     layers = np.float32(layers)
-    layers_colours = np.float32(layers_colours)
+    color_list = np.float32(color_list)
     
-    layers_colours = np.insert(layers_colours, 3, layer_alpha, axis=1)
+    layers_colours = np.insert(color_list, 3, layer_alpha, axis=1)
       
     return layers, layers_colours
+
 
 
 def draw_frame(box_coords, box_colour):
