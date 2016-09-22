@@ -70,6 +70,11 @@ class Figure(object):
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
 
+    def plot_slice(self, cells_select_df, morphologies,cmap,color_labels,xplane_range):
+        
+        segments, segments_colours = art.draw_slice(cells_select_df, morphologies,cmap,color_labels,xplane_range)
+        self.segments.extend(segments)
+        self.segments_colours.extend(segments_colours)
         
 
     def clear(self):

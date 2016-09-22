@@ -41,6 +41,45 @@ def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
 
     return segments, segments_colours
 
+def draw_slice(cells_select_df, morphologies, cmap,color_label,xplane_range):
+    
+
+    segments = []  #collect all segments; convert to numpy afterwards
+    segments_colours = []
+
+    print "... processing cell: ",
+    cell_counter = 0
+    cmap_rgb = cm.convert_to_rgb(cmap)
+
+    xmin = xplane_range[0]
+    xmax = xplane_range[1]
+    
+    for gid, cell_prop in cells_select_df.iterrows():  
+        cell_counter+=1         
+        if cell_counter%100==0: print cell_counter,
+        model_id =  cell_prop['model_id']    
+        morphology = morphologies[model_id]
+        segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
+
+        segs_center = 0.5*(segs_start+segs_end)
+        
+        ix_slice_max = np.where(segs_center[:,0]<xmax)
+        ix_slice_min = np.where(segs_center[:,0]>xmin)
+        ix_slice = np.intersect1d(ix_slice_min,ix_slice_max)
+        
+        color = cmap_rgb[cell_prop[color_label]]
+
+        segs_start_slice = np.squeeze(segs_start[ix_slice,:])
+        segs_end_slice = np.squeeze(segs_end[ix_slice,:])
+        
+        segs_coords,segs_colours = draw_line_segments(segs_start_slice,segs_end_slice,color)
+        segments.extend(segs_coords)
+        segments_colours.extend(segs_colours)
+        
+    print "ready to display 3d segments!"
+
+    return segments, segments_colours
+
 
 def draw_line_segments(segs_start,segs_end,color):
     '''

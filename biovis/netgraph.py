@@ -11,7 +11,7 @@ import numpy as np
 #********************************************************************
 
 def load_nodes(cells_file_name, cell_models_file_name):
-    print "...importing nodes..."
+    print "...importing nodes: ",
 
 
     c_df = pd.read_csv(cells_file_name, sep=' ')
@@ -21,7 +21,6 @@ def load_nodes(cells_file_name, cell_models_file_name):
     cm_df.set_index('model_id',inplace=True)
 
     ncells = len(c_df.index) # total number of simulated cells
-    print "...total # cells simulated: ", ncells
 
     nodes_df = pd.merge(left=c_df,
                             right=cm_df, 
@@ -29,12 +28,12 @@ def load_nodes(cells_file_name, cell_models_file_name):
                             left_on='model_id', 
                             right_index=True) # use 'model_id' key to merge, for right table the "model_id" is an index
     
+    print ncells
     return nodes_df, cm_df
 
    
     
 def load_morphologies(morph_dir, cm_df):
-    print "...importing morphologies..."
 
     morphologies = {}
     soma_sizes = {}
@@ -61,6 +60,7 @@ def load_morphologies(morph_dir, cm_df):
 
         f5.close()
 
+    print "# unique morphologies: ", len(morphologies)
 
         
     return morphologies,soma_sizes
