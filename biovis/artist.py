@@ -26,7 +26,7 @@ def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
 
     for gid, cell_prop in cells_select_df.iterrows():  
         cell_counter+=1         
-        if cell_counter%100==0: print cell_counter,
+        if cell_counter%1000==0: print cell_counter,
         model_id =  cell_prop['model_id']	
         morphology = morphologies[model_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
@@ -56,7 +56,7 @@ def draw_slice(cells_select_df, morphologies, cmap,color_label,xplane_range):
     
     for gid, cell_prop in cells_select_df.iterrows():  
         cell_counter+=1         
-        if cell_counter%100==0: print cell_counter,
+        if cell_counter%1000==0: print cell_counter,
         model_id =  cell_prop['model_id']    
         morphology = morphologies[model_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
@@ -108,7 +108,7 @@ def draw_somas(cells_select_df, soma_sizes, cmap, color_label):
     print "... processing cell: ",
     for gid, cell_prop in cells_select_df.iterrows():  
         cell_counter+=1         
-        if cell_counter%100==0: print cell_counter,
+        if cell_counter%1000==0: print cell_counter,
         
         x_soma = cell_prop['x_soma'] # needed to do those in sequence because Series did not inherite the dtype from DataFrame 
         y_soma = cell_prop['y_soma'] # need to look for a more elegant solution to this 

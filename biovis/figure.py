@@ -64,15 +64,15 @@ class Figure(object):
 
 #        print 'self.sphere_points', self.sphere_points.shape 
  
-    def plot_morph(self, cells_select_df, morphologies,cmap,color_labels):
+    def plot_morph(self, cells_select_df, morphologies,cmap,color_label):
         
-        segments, segments_colours = art.draw_morphologies(cells_select_df, morphologies,cmap,color_labels)
+        segments, segments_colours = art.draw_morphologies(cells_select_df, morphologies,cmap,color_label)
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
 
-    def plot_slice(self, cells_select_df, morphologies,cmap,color_labels,xplane_range):
+    def plot_slice(self, cells_select_df, morphologies,cmap,color_label,xplane_range):
         
-        segments, segments_colours = art.draw_slice(cells_select_df, morphologies,cmap,color_labels,xplane_range)
+        segments, segments_colours = art.draw_slice(cells_select_df, morphologies,cmap,color_label,xplane_range)
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
         
