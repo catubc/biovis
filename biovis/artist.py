@@ -17,7 +17,7 @@ import cmaps as cm
 def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
     
 
-    segments = []  #collect all segments; convert to numpy afterwards
+    segments = []  #collect all segments; convert to numpy array in opengl class; 
     segments_colours = []
 
     print "... processing cell: ",
@@ -40,6 +40,113 @@ def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
     print "ready to display 3d segments!"
 
     return segments, segments_colours
+
+
+def draw_morphologies3D(cells_select_df, morphologies, cmap, color_label):
+    ''' Draw 3D morphologies'''
+    print "...drawing 3D segments..."
+
+    #Test single cell with 3D cylinders
+    
+    segments3D = []  #collect all segments; convert to numpy array in opengl class; 
+    segments3D_colours = []
+
+    cell_counter = 0
+    cmap_rgb = cm.convert_to_rgb(cmap)
+
+    for gid, cell_prop in cells_select_df.iterrows():  
+        cell_counter+=1         
+        if cell_counter%1000==0: print "... processing cell: ", cell_counter
+
+        #Select colour
+        color = cmap_rgb[cell_prop[color_label]]
+
+        #Load segs starts/ends 
+        model_id =  cell_prop['model_id']	
+        morphology = morphologies[model_id]
+        segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
+
+        #Make line seg arrays for opengl
+        segs_coords, segs_colours = draw_line_segments3D(segs_start,segs_end,color)
+        segments3D.extend(segs_coords)
+        segments3D_colours.extend(segs_colours)
+        
+        break       #************************************DEBUG ONLY; Process single cell  
+
+
+    return segments3D, segments3D_colours
+
+
+
+def draw_line_segments3D(starts, ends, color):
+
+    '''multiplicate, translate and rotate single segments for plotting of cylinder surfaces 
+    '''
+
+    print "... # of segs: ", len(starts)
+    #print starts
+    #initialize holding matrices
+    segs_start = []
+    segs_end = []
+
+    #make 6 sided cylinders
+    a1 = 10.; a2 = 10.      #constant radii of cylinders
+    theta_n = []
+    for k in range(6):  
+        theta_n.append(2*math.pi/6.*k)
+
+
+    #loop over all segments and tranform the primitive along correct angles
+    #for l in range(len(starts)): 
+    for l in range(2):  #Do just a few segments while debugging
+        h = np.linalg.norm(ends[l]-starts[l])
+        print "...length of seg: ", l, " = ", h
+
+        #Save locations of primitve starts/ends to be rotated below
+        temp_starts = []
+        temp_ends = []
+        for k in range(len(theta_n)):       #Is this correct?!
+            temp_starts.append([a1*math.cos(theta_n[k]), 0, a1*math.sin(theta_n[k])])
+            temp_ends.append([a2*math.cos(theta_n[k]), h, a2*math.sin(theta_n[k])])
+
+        #rotate 6 lines
+        for k in range(len(temp_starts)):
+            direction_cylinder_axis = [0,1,0]       #primitive direciton always up; is this correct ?!
+            direction_segment_center = [temp_ends[k][0]-temp_starts[k][0],      #Swapping y-axis <-> z-axis; correct?! 
+                                        temp_ends[k][2]-temp_starts[k][2], 
+                                        temp_ends[k][1]-temp_starts[k][1]]
+                        
+            #************getting lost around this place****************
+            rotv = np.cross(direction_cylinder_axis, direction_segment_center)
+            ctheta = np.dot(direction_cylinder_axis, direction_segment_center)
+
+            r = tr.rotation_matrix(rotv, math.acos(ctheta))
+            
+            segs_start.append(np.dot(temp_starts[k], r)+starts[l])
+            segs_end.append(np.dot(temp_ends[k], r)+ends[l])
+
+
+    #make coords arrays
+    segs_coords = np.empty((len(segs_start)*2, 3), dtype=np.float32)
+    segs_coords[::2] = segs_start; segs_coords[1::2] = segs_end
+
+    segs_colours = [color]*len(segs_coords)
+
+    return segs_coords, segs_colours
+
+
+def draw_line_segments(segs_start,segs_end,color):
+    '''
+    interleave starts/ends into arrays for plotting;
+    '''
+    segs_coords = np.empty((len(segs_start)*2, 3), dtype=np.float32)
+    segs_coords[::2] = segs_start; segs_coords[1::2] = segs_end
+
+    segs_colours = [color]*len(segs_coords)
+
+    return segs_coords, segs_colours
+
+
 
 def draw_slice(cells_select_df, morphologies, cmap,color_label,xplane_range):
     
@@ -79,18 +186,6 @@ def draw_slice(cells_select_df, morphologies, cmap,color_label,xplane_range):
     print "ready to display 3d segments!"
 
     return segments, segments_colours
-
-
-def draw_line_segments(segs_start,segs_end,color):
-    '''
-    draw line segments
-    '''
-    segs_coords = np.empty((len(segs_start)*2, 3), dtype=np.float32)
-    segs_coords[::2] = segs_start; segs_coords[1::2] = segs_end
-
-    segs_colours = [color]*len(segs_coords)
-
-    return segs_coords,segs_colours
 
 
 def draw_somas(cells_select_df, soma_sizes, cmap, color_label):

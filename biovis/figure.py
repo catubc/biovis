@@ -24,15 +24,21 @@ class Figure(object):
     
     def set_defaults(self):
         
+        ''' Functions to initialize arrays; may not be necessary. 
+        '''
+        
         self.background = 'black'
         self.segments = []
         self.segments_colours = []
+        self.segments3D = []
+        self.segments3D_colours = []
         self.sphere_points = []
         self.sphere_colours = []
         self.layers = []
         self.layers_colours = []
         self.frame = []
         self.frame_colours = []
+
 
     def set_bgcolor(self, color):
         print "...setting gbcolor: ", color
@@ -57,7 +63,7 @@ class Figure(object):
 
     def plot_somas(self, cells_select_df, morphologies, cmap,color_label):
 
-        sphere_points, sphere_colours = art.draw_somas(cells_select_df, morphologies, cmap,color_label)
+        sphere_points, sphere_colours = art.draw_somas(cells_select_df, morphologies, cmap, color_label)
         self.sphere_points.extend(sphere_points)
         self.sphere_colours.extend(sphere_colours)
 
@@ -69,6 +75,14 @@ class Figure(object):
         segments, segments_colours = art.draw_morphologies(cells_select_df, morphologies,cmap,color_label)
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
+
+
+    def plot_morph3D(self, cells_select_df, morphologies,cmap,color_label):
+        segments3D, segments3D_colours = art.draw_morphologies3D(cells_select_df, morphologies,cmap,color_label)
+        self.segments3D.extend(segments3D)
+        self.segments3D_colours.extend(segments3D_colours)
+
+
 
     def plot_slice(self, cells_select_df, morphologies,cmap,color_label,xplane_range):
         
@@ -88,15 +102,25 @@ class Figure(object):
 
     def show(self):   #Show
         
-        self.GUI = GLWindow(self)   #Pass entire figure object in order to access its attributes inside opengl
-
         print "... showing ..."
+
+        self.GUI = GLWindow(self)   #Pass entire figure object in order to access its attributes inside opengl
         self.app.exec_()
+
+
+        #app = QApplication(sys.argv)
+        #widget = GLWindow(self)
+        #widget.show()
+        #sys.exit(self.app.exec_())
+
 
                 
-    def restart(self):   #Restarts widget
-        print "...restarting ..."
-        self.GUI = GLWindow(self)
-        self.app.exec_()
+    def update(self):   #Restarts widget
+        #self.GUI.glWidget.repaint()
+        #self.app.processEvents()
 
+        print "...updating ..."
 
+        #self.GUI = GLWindow(self)
+        #self.app.exec_()
+        

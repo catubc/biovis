@@ -1,11 +1,12 @@
 import numpy as np
 import math
 
-def rotation_matrix( axis, theta):
+def rotation_matrix(axis, theta):
     """
     Return the rotation matrix associated with counterclockwise rotation about
     the given axis by theta radians.
     """
+
     axis = np.asarray(axis)
     theta = np.asarray(theta)
     axis = axis/math.sqrt(np.dot(axis, axis))

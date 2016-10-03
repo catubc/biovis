@@ -20,7 +20,7 @@ class GLWindow(QtGui.QWidget):
     def __init__(self, fig, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.glWidget = GLWidget(fig, parent=self)
-        
+
         mainLayout = QtGui.QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
         
@@ -35,6 +35,8 @@ class GLWidget(QtOpenGL.QGLWidget):
     
     def __init__(self, fig, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
+        self.setFocusPolicy(Qt.StrongFocus)
+
         self.lastPos = QtCore.QPoint()
         self.focus = np.float32([0, 0, 0]) # init camera focus
         self.axes = 'both' # display both mini and focal xyz axes by default
@@ -67,6 +69,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.background = fig.background
         self.segments = np.array(fig.segments)
         self.segments_colours = np.array(fig.segments_colours)
+        self.segments3D = np.array(fig.segments3D)
+        self.segments3D_colours = np.array(fig.segments3D_colours)
         self.sphere_points = np.array(fig.sphere_points)
         self.sphere_colours = np.array(fig.sphere_colours)
         self.layers = fig.layers
@@ -154,8 +158,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         
 
 
-
-
         #Column wire frame
         if len(self.frame)>0:
             GL.glColorPointerub(self.frame_colours) # unsigned byte, ie uint8
@@ -173,7 +175,18 @@ class GLWidget(QtOpenGL.QGLWidget):
             #glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
             #glVertexPointerf(self.dendrite_quads) # float32
             #glDrawArrays(GL_QUADS, 0, len(self.dendrite_quads))
-            
+           
+ 
+        #Plot 3D segments 
+        if len(self.segments3D)>0:
+            GL.glColorPointerub(self.segments3D_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.segments3D) # float32
+            GL.glDrawArrays(GL.GL_LINES, 0, len(self.segments3D))
+
+            #glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
+            #glVertexPointerf(self.dendrite_quads) # float32
+            #glDrawArrays(GL_QUADS, 0, len(self.dendrite_quads))
+
             
 
         #Plots somas 
