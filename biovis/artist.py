@@ -34,7 +34,10 @@ def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
         color = cmap_rgb[cell_prop[color_label]]
 
         segs_coords,segs_colours = draw_line_segments(segs_start,segs_end,color)
+#        print "segs_coords:", segs_coords.shape, type(segs_coords)
         segments.extend(segs_coords)
+#        print "segments:", type(segments)
+#        print segments
         segments_colours.extend(segs_colours)
         
     print "ready to display 3d segments!"
@@ -65,74 +68,72 @@ def draw_morphologies3D(cells_select_df, morphologies, cmap, color_label):
         model_id =  cell_prop['model_id']	
         morphology = morphologies[model_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
-
-        #Make line seg arrays for opengl
         segs_coords, segs_colours = draw_line_segments3D(segs_start,segs_end,color)
         segments3D.extend(segs_coords)
         segments3D_colours.extend(segs_colours)
         
-        break       #************************************DEBUG ONLY; Process single cell  
 
 
     return segments3D, segments3D_colours
 
 
 
-def draw_line_segments3D(starts, ends, color):
+def draw_line_segments3D(segs_start, segs_end, color):
 
     '''multiplicate, translate and rotate single segments for plotting of cylinder surfaces 
     '''
 
-    print "... # of segs: ", len(starts)
-    #print starts
-    #initialize holding matrices
-    segs_start = []
-    segs_end = []
+    a1 = 3.; a2 = 3.      #constant radii of cylinders
+     
+    N = 8 # number of sides in the cylinder
+    
+    thetan  = np.arange(N)*2*math.pi/N
+    xn=np.cos(thetan)
+    zn=np.sin(thetan)
+ 
+    direction_cylinder_axis_prim = [0,1,0]       #primitive direciton always up; is this correct ?!
+    
+    segs_dl = segs_start-segs_end
+ 
+    segs_coords = []
+    segs_colours = []
 
-    #make 6 sided cylinders
-    a1 = 10.; a2 = 10.      #constant radii of cylinders
-    theta_n = []
-    for k in range(6):  
-        theta_n.append(2*math.pi/6.*k)
+    for iseg in xrange(segs_dl.shape[0]):
+ 
+        seg_dl = segs_dl[iseg,:]
+ 
+        dlmag = np.linalg.norm(seg_dl)
+ 
+        prim_start=np.zeros((N,3))
+        prim_start[:,0]=a1*xn
+        prim_start[:,2]=a1*zn
+         
+        prim_end=np.zeros((N,3))
+        prim_end[:,0]=a2*xn
+        prim_end[:,1]=dlmag
+        prim_end[:,2]=a2*zn
+ 
+        seg_start = segs_start[iseg,:]
+         
+        rotv = np.cross(direction_cylinder_axis_prim, seg_dl/dlmag)
+        ctheta = np.dot(direction_cylinder_axis_prim, seg_dl/dlmag)
 
-
-    #loop over all segments and tranform the primitive along correct angles
-    #for l in range(len(starts)): 
-    for l in range(2):  #Do just a few segments while debugging
-        h = np.linalg.norm(ends[l]-starts[l])
-        print "...length of seg: ", l, " = ", h
-
-        #Save locations of primitve starts/ends to be rotated below
-        temp_starts = []
-        temp_ends = []
-        for k in range(len(theta_n)):       #Is this correct?!
-            temp_starts.append([a1*math.cos(theta_n[k]), 0, a1*math.sin(theta_n[k])])
-            temp_ends.append([a2*math.cos(theta_n[k]), h, a2*math.sin(theta_n[k])])
-
-        #rotate 6 lines
-        for k in range(len(temp_starts)):
-            direction_cylinder_axis = [0,1,0]       #primitive direciton always up; is this correct ?!
-            direction_segment_center = [temp_ends[k][0]-temp_starts[k][0],      #Swapping y-axis <-> z-axis; correct?! 
-                                        temp_ends[k][2]-temp_starts[k][2], 
-                                        temp_ends[k][1]-temp_starts[k][1]]
-                        
-            #************getting lost around this place****************
-            rotv = np.cross(direction_cylinder_axis, direction_segment_center)
-            ctheta = np.dot(direction_cylinder_axis, direction_segment_center)
-
-            r = tr.rotation_matrix(rotv, math.acos(ctheta))
-            
-            segs_start.append(np.dot(temp_starts[k], r)+starts[l])
-            segs_end.append(np.dot(temp_ends[k], r)+ends[l])
-
-
+        RotMat = tr.rotation_matrix(rotv, math.pi+math.acos(ctheta))
+ 
+        nodes_start = seg_start + np.dot(prim_start,RotMat.T)  # use the tranposed matrix since we multiply on the right
+        nodes_end = seg_start + np.dot(prim_end,RotMat.T)
+ 
     #make coords arrays
-    segs_coords = np.empty((len(segs_start)*2, 3), dtype=np.float32)
-    segs_coords[::2] = segs_start; segs_coords[1::2] = segs_end
-
-    segs_colours = [color]*len(segs_coords)
-
+        seg_nodes = np.empty((len(nodes_start)*2, 3), dtype=np.float32)
+        seg_nodes[::2] = nodes_start;      seg_nodes[1::2] = nodes_end
+ 
+        seg_colours = [color]*len(seg_nodes)
+ 
+        segs_coords.extend(seg_nodes)
+        segs_colours.extend(seg_colours)
+    
     return segs_coords, segs_colours
+
 
 
 def draw_line_segments(segs_start,segs_end,color):
