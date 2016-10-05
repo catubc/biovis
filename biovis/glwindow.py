@@ -179,15 +179,17 @@ class GLWidget(QtOpenGL.QGLWidget):
  
         #Plot 3D segments 
         if len(self.segments3D)>0:
+            #GL.glColorPointerub(self.segments3D_colours) # unsigned byte, ie uint8
+            #GL.glVertexPointerf(self.segments3D) # float32
+            #GL.glDrawArrays(GL.GL_LINES, 0, len(self.segments3D))
+
             GL.glColorPointerub(self.segments3D_colours) # unsigned byte, ie uint8
             GL.glVertexPointerf(self.segments3D) # float32
-            GL.glDrawArrays(GL.GL_LINES, 0, len(self.segments3D))
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(self.segments3D))
 
-            #glColorPointerub(self.dendrite_colors) # unsigned byte, ie uint8
-            #glVertexPointerf(self.dendrite_quads) # float32
-            #glDrawArrays(GL_QUADS, 0, len(self.dendrite_quads))
-
-            
+            #GL.glColorPointerub(self.segments3D_colours) # unsigned byte, ie uint8
+            #GL.glVertexPointerf(self.segments3D) # float32
+            #GL.glDrawArrays(GL.GL_QUADS, 0, len(self.segments3D)*4)
 
         #Plots somas 
         if len(self.sphere_points)>0:

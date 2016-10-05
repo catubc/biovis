@@ -68,6 +68,7 @@ def draw_morphologies3D(cells_select_df, morphologies, cmap, color_label):
         model_id =  cell_prop['model_id']	
         morphology = morphologies[model_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
+
         segs_coords, segs_colours = draw_line_segments3D(segs_start,segs_end,color)
         segments3D.extend(segs_coords)
         segments3D_colours.extend(segs_colours)
@@ -83,22 +84,32 @@ def draw_line_segments3D(segs_start, segs_end, color):
     '''multiplicate, translate and rotate single segments for plotting of cylinder surfaces 
     '''
 
-    a1 = 3.; a2 = 3.      #constant radii of cylinders
+    a1 = 3.; a2 = 3.      #constant radii of cylinders; TODO Load proper dendrite radii
      
-    N = 8 # number of sides in the cylinder
+    N = 6 # number of sides in the cylinder
     
     thetan  = np.arange(N)*2*math.pi/N
     xn=np.cos(thetan)
     zn=np.sin(thetan)
  
-    direction_cylinder_axis_prim = [0,1,0]       #primitive direciton always up; is this correct ?!
+    direction_cylinder_axis_prim = [0,1,0]       #primitive direction always up; 
     
-    segs_dl = segs_start-segs_end
- 
+    segs_dl = segs_start - segs_end
+    
+    #print segs_start[:10]
+    #print segs_start[:,1][:10]
+    #return
+
+    #For color normalization
+    lowest_seg = np.min(segs_start[:,1])
+    highest_seg = np.max(segs_start[:, 1])
+    range_seg = highest_seg-lowest_seg
+    print lowest_seg, highest_seg, range_seg
+
     segs_coords = []
     segs_colours = []
 
-    for iseg in xrange(segs_dl.shape[0]):
+    for iseg in xrange(segs_dl.shape[0]):           
  
         seg_dl = segs_dl[iseg,:]
  
@@ -107,7 +118,7 @@ def draw_line_segments3D(segs_start, segs_end, color):
         prim_start=np.zeros((N,3))
         prim_start[:,0]=a1*xn
         prim_start[:,2]=a1*zn
-         
+        
         prim_end=np.zeros((N,3))
         prim_end[:,0]=a2*xn
         prim_end[:,1]=dlmag
@@ -119,19 +130,27 @@ def draw_line_segments3D(segs_start, segs_end, color):
         ctheta = np.dot(direction_cylinder_axis_prim, seg_dl/dlmag)
 
         RotMat = tr.rotation_matrix(rotv, math.pi+math.acos(ctheta))
- 
+
         nodes_start = seg_start + np.dot(prim_start,RotMat.T)  # use the tranposed matrix since we multiply on the right
         nodes_end = seg_start + np.dot(prim_end,RotMat.T)
- 
-    #make coords arrays
-        seg_nodes = np.empty((len(nodes_start)*2, 3), dtype=np.float32)
-        seg_nodes[::2] = nodes_start;      seg_nodes[1::2] = nodes_end
- 
-        seg_colours = [color]*len(seg_nodes)
- 
+
+        #make 1D seg lines
+        #seg_nodes = np.empty((len(nodes_start)*2, 3), dtype=np.float32)
+        #seg_nodes[::2] = nodes_start;      seg_nodes[1::2] = nodes_end
+
+        #make 3D quad faces
+        seg_nodes = []                      #Cat: can this loop be pythonized?
+        for k in range(N):
+            seg_nodes.extend([nodes_start[k], nodes_end[k], nodes_end[(k+1)%N], nodes_start[(k+1)%N]])
+
+        #Use manual shading of segments by depth; TODO: implement compiled shaders
+        cf = ((nodes_start[0][1]-lowest_seg)/range_seg+2.)/3. 
+        color_factor = np.array([cf,cf,cf])
+        seg_colours = [color]*len(seg_nodes)*(color_factor)
+
         segs_coords.extend(seg_nodes)
         segs_colours.extend(seg_colours)
-    
+
     return segs_coords, segs_colours
 
 
