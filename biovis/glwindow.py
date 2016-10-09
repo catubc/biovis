@@ -13,12 +13,14 @@ import numpy as np
 from PyQt4 import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 from OpenGL import GL, GLU
+from PyQt4.QtOpenGL import QGLShaderProgram
 
-
+        
 class GLWindow(QtGui.QWidget):
     
     def __init__(self, fig, parent=None):
         QtGui.QWidget.__init__(self, parent)
+
         self.glWidget = GLWidget(fig, parent=self)
 
         mainLayout = QtGui.QHBoxLayout()
@@ -29,12 +31,19 @@ class GLWindow(QtGui.QWidget):
 
         self.show()
 
-
+    def keyPressEvent(self, e):
+        
+        if e.key() == QtCore.Qt.Key_Escape:
+            self.close()
+            
 
 class GLWidget(QtOpenGL.QGLWidget):
-    
+        
     def __init__(self, fig, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
+
+        self.fig = fig
+
         self.setFocusPolicy(Qt.StrongFocus)
 
         self.lastPos = QtCore.QPoint()
@@ -63,6 +72,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.setColormap(colormap)
         '''
         
+        #self.trigger.connect(self.reloadGL(fig))
+
 
     def load_data_from_fig(self, fig):
 
@@ -71,6 +82,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.segments_colours = np.array(fig.segments_colours)
         self.segments3D = np.array(fig.segments3D)
         self.segments3D_colours = np.array(fig.segments3D_colours)
+        self.segments3D_joints = np.array(fig.segments3D_joints)
+        self.segments3D_joints_colours = np.array(fig.segments3D_joints_colours)
         self.sphere_points = np.array(fig.sphere_points)
         self.sphere_colours = np.array(fig.sphere_colours)
         self.layers = fig.layers
@@ -78,19 +91,22 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.frame = fig.frame
         self.frame_colours = fig.frame_colours
 
-
+        self.initializeGL()
+        self.updateGL()
+        self.paintGL()
+        
     #def reloadGL(self, fig):
         
         #print "...reloading GL widget..."
         
-        #self.segments = vis.segments
-        #self.segments_colours = vis.segments_colours
-        #self.triangle_points = vis.triangle_points
-        #self.triangle_colours = vis.triangle_colours
-        #self.layers = vis.layers
-        #self.layers_colours = vis.layers_colours
-        #self.frame = vis.frame
-        #self.frame_colours = vis.frame_colours
+        #self.segments = fig.segments
+        #self.segments_colours = fig.segments_colours
+        #self.triangle_points = fig.triangle_points
+        #self.triangle_colours = fig.triangle_colours
+        #self.layers = fig.layers
+        #self.layers_colours = fig.layers_colours
+        #self.frame = fig.frame
+        #self.frame_colours = fig.frame_colours
         
         #self.initializeGL()
         #self.updateGL()
@@ -116,25 +132,50 @@ class GLWidget(QtOpenGL.QGLWidget):
         #glEnable(GL_CULL_FACE) # only useful for solids
         GL.glTranslate(0, 750, -3000) # init camera distance from origin
 
-
-        #glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-
         #Modded transparency: blends colours in order they were plotted; otherwise need to use compiled shaders 
         GL.glEnable (GL.GL_BLEND)
         GL.glBlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
-        #glEnable(GL_LIGHTING)
-        #glEnable(GL_LIGHT0)
+        #Lighting, not alwasy used
+        #GL.glEnable(GL.GL_LIGHTING)
+        #GL.glEnable(GL.GL_LIGHT0)
         
         #lightpos = [1000.,0.,0., 1.]
-        #glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
+        #GL.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightpos)
+
+        #GL.glDepthMask(GL.GL_TRUE);
+        #GL.glDepthFunc(GL.GL_LEQUAL);
+
+
+        #LightAmbient=[0.2, 0.2, 0.2, 1.0]
+        #LightDiffuse=[1.0, 1.0, 1.0, 1.0]
+        #LightSpecular= [1.0, 1.0, 1.0, 1.0]
+        #LightPosition= [1000.0, 1.0, 1.0]
+
+        #GL.glEnable(GL.GL_LIGHT0)
+        #GL.glEnable(GL.GL_LIGHTING)
+        #GL.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, LightAmbient)
+        #GL.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse)
+        #GL.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, LightSpecular)
+
+        #GL.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition)
+         
+        #GL.glEnable ( GL.GL_COLOR_MATERIAL )
+        #GL.glColorMaterial ( GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE )
+
 
         #white = [0.8, 0.8, 0.8, 1.0]
         #cyan = [0., .8, .8, 1.]
-        #GL.glMaterialfv(GL.GL_FRONT, GL_DIFFUSE, cyan)
-        #GL.glMaterialfv(GL.GL_FRONT, GL_SPECULAR, white)
-        #shininess = [500]
-        #glMaterialfv(GL_FRONT, GL_SHININESS, shininess)
+        ##GL.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cyan)
+        #GL.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, white)
+        #shininess = [100,100,100,100]
+        #GL.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, shininess)
+
+        GL.glShadeModel(GL.GL_SMOOTH)
+
+        #self.shaderProgram = QGLShaderProgram()
+        #self.shaderProgram.link()
+
 
     def paintGL(self):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
@@ -190,6 +231,12 @@ class GLWidget(QtOpenGL.QGLWidget):
             #GL.glColorPointerub(self.segments3D_colours) # unsigned byte, ie uint8
             #GL.glVertexPointerf(self.segments3D) # float32
             #GL.glDrawArrays(GL.GL_QUADS, 0, len(self.segments3D)*4)
+
+        if len(self.segments3D_joints)>0:
+            GL.glColorPointerub(self.segments3D_joints_colours) # unsigned byte, ie uint8
+            GL.glVertexPointerf(self.segments3D_joints) # float32
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(self.segments3D_joints))
+            
 
         #Plots somas 
         if len(self.sphere_points)>0:

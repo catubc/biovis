@@ -18,6 +18,7 @@ class Figure(object):
     def __init__(self):
         print "... initializing canvas ..."
         self.app = QApplication(sys.argv)
+        self.app.processEvents()
 
         #Set default parameters if user does not set these values; #opengl needs defaults for plotting routines; 
         self.set_defaults()
@@ -32,6 +33,8 @@ class Figure(object):
         self.segments_colours = []
         self.segments3D = []
         self.segments3D_colours = []
+        self.segments3D_joints = [] 
+        self.segments3D_joints_colours = []        
         self.sphere_points = []
         self.sphere_colours = []
         self.layers = []
@@ -56,10 +59,8 @@ class Figure(object):
         print "...setting layers..."
 
         if layer_depths == []: self.layers = []; self.layers_colours = []       #Reset morphs
-#        else: self.layers, self.layers_colours = art.draw_layers(layer_depths, layer_colours, layer_alpha)
         else: self.layers, self.layers_colours = art.draw_layers(layer_depths, layer_colours, layer_alpha)
-        
-#        print self.layers, self.layers_colours
+       
 
     def plot_somas(self, cells_select_df, morphologies, cmap,color_label):
 
@@ -67,28 +68,35 @@ class Figure(object):
         self.sphere_points.extend(sphere_points)
         self.sphere_colours.extend(sphere_colours)
 
-
-#        print 'self.sphere_points', self.sphere_points.shape 
  
-    def plot_morph(self, cells_select_df, morphologies,cmap,color_label):
+    def plot_morph(self, cells_select_df, morphologies, cmap, color_label):
         
         segments, segments_colours = art.draw_morphologies(cells_select_df, morphologies,cmap,color_label)
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
 
 
-    def plot_morph3D(self, cells_select_df, morphologies,cmap,color_label):
-        segments3D, segments3D_colours = art.draw_morphologies3D(cells_select_df, morphologies,cmap,color_label)
+    def plot_morph3D(self, cells_select_df, morphologies, cmap, color_label, n_faces):
+        
+        segments3D, segments3D_colours, segments3D_joints, segments3D_joints_colours = art.draw_morphologies3D(cells_select_df, morphologies,cmap,color_label, n_faces)
         self.segments3D.extend(segments3D)
         self.segments3D_colours.extend(segments3D_colours)
+        self.segments3D_joints.extend(segments3D_joints)
+        self.segments3D_joints_colours.extend(segments3D_joints_colours)
 
 
-
-    def plot_slice(self, cells_select_df, morphologies,cmap,color_label,xplane_range):
+    def plot_slice(self, cells_select_df, morphologies, cmap, color_label, xplane_range):
         
         segments, segments_colours = art.draw_slice(cells_select_df, morphologies,cmap,color_label,xplane_range)
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
+    
+    def plot_synapses(self, cid, synapses, cells_select_df, morphologies, cmap, color_label, n_faces):
+    
+        #Plot synapses along surface of cylinders; 
+        sphere_points, sphere_colours = art.draw_synapses(self.segments3D, cid, synapses, cells_select_df, morphologies, cmap, color_label, n_faces)
+        self.sphere_points.extend(sphere_points)
+        self.sphere_colours.extend(sphere_colours)
         
 
     def clear(self):
@@ -106,6 +114,7 @@ class Figure(object):
 
         self.GUI = GLWindow(self)   #Pass entire figure object in order to access its attributes inside opengl
         self.app.exec_()
+        #sys.exit()
 
 
         #app = QApplication(sys.argv)
@@ -116,10 +125,12 @@ class Figure(object):
 
                 
     def update(self):   #Restarts widget
+        self.app.processEvents()
+
         #self.GUI.glWidget.repaint()
         #self.app.processEvents()
 
-        print "...updating ..."
+        print "...updating ... NOT WORKING "
 
         #self.GUI = GLWindow(self)
         #self.app.exec_()

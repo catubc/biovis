@@ -64,4 +64,19 @@ def load_morphologies(morph_dir, cm_df):
 
         
     return morphologies,soma_sizes
+
+
+
+def load_synapses(synapses_dir, gid):
+    
+    import csv
+    with open(synapses_dir+'/'+str(gid)+'.csv', 'rb') as csvfile:
+        rows = csv.reader(csvfile)
+        next(rows, None)    #Skip header
+        syn_locs = []
+        for row in rows:
+            syn_locs.append(row[0].split()[1])
+    syn_locs = np.int16(syn_locs)
+    
+    return syn_locs
     
