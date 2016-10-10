@@ -221,8 +221,8 @@ def draw_line_segments3D(segs_start, segs_end, color, n_faces):
                         A = (nodes_array[C]-nodes_end[n])         #Compute vectors between current seg_start and existing saved array 
                         B = (A*A).sum(axis=1)**0.5                  #Compute eucledian length
                         D = np.argmin(B)                            #Find nearest point
-                        joint_end.append(nodes_end[n])
-                        joint_start.append(nodes_array[C][D])
+                        joint_start.append(nodes_end[n])
+                        joint_end.append(nodes_array[C][D])
                         
 
         #Keep track of the saved segs and nodes array for use above to fuse/joint creation
