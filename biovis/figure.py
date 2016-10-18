@@ -4,8 +4,8 @@
 #MIT License
 
 import sys
-from PyQt4.QtGui import QApplication
 from glwindow import GLWindow
+from PyQt4 import QtCore, QtGui
 
 import netgraph as ng       #Sergey's dataframe loading modules
 import artist as art    #functions to load data into opengl-ready arrays
@@ -17,9 +17,14 @@ class Figure(object):
 
     def __init__(self):
         print "... initializing canvas ..."
-        self.app = QApplication(sys.argv)
-        self.app.processEvents()
+        #self.app = QtGui.QApplication(sys.argv)
 
+        self.app = QtCore.QCoreApplication.instance()
+        if self.app is None:
+            self.app = QtGui.QApplication([])
+    
+        self.app.processEvents()
+        
         #Set default parameters if user does not set these values; #opengl needs defaults for plotting routines; 
         self.set_defaults()
     
@@ -108,12 +113,36 @@ class Figure(object):
         pass
 
 
+    def resize_screen(self):
+        
+        sizes = [1000, 10000]
+        
+        self.GUI.resize(sizes[self.GUI.size%2], sizes[self.GUI.size%2])
+        self.GUI.size+=1
+
+        self.GUI.glWidget.updateGL()
+
+    def screen_grab(self):
+        
+        self.GUI.glWidget.save(0)
+
     def show(self):   #Show
         
         print "... showing ..."
 
-        self.GUI = GLWindow(self)   #Pass entire figure object in order to access its attributes inside opengl
+        #self.GUI = GLWindow(self)   #Pass entire figure object in order to access its attributes inside opengl
+        #self.app.exec_()
+        
+        self.GUI = GLWindow(self)
+        #GUI.show()
+        
+        #try:
+        #from IPython.lib.guisupport import start_event_loop_qt4
+        #start_event_loop_qt4(self.app)
+        
+        #except ImportError:
         self.app.exec_()
+        
         #sys.exit()
 
 
@@ -125,12 +154,17 @@ class Figure(object):
 
                 
     def update(self):   #Restarts widget
-        self.app.processEvents()
 
         #self.GUI.glWidget.repaint()
+        #self.GUI.show()
+        self.GUI.glWidget.updateGL()
+        #self.GUI.glWidget.updateGL()
+        #self.GUI.glWidget.repaint()
+        #self.GUI.glWidget.show()
+
         #self.app.processEvents()
 
-        print "...updating ... NOT WORKING "
+        #print "...updating ... NOT WORKING "
 
         #self.GUI = GLWindow(self)
         #self.app.exec_()

@@ -13,7 +13,7 @@ import numpy as np
 from PyQt4 import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 from OpenGL import GL, GLU
-from PyQt4.QtOpenGL import QGLShaderProgram
+#from PyQt4.QtOpenGL import QGLShaderProgram
 
         
 class GLWindow(QtGui.QWidget):
@@ -29,12 +29,14 @@ class GLWindow(QtGui.QWidget):
         self.setLayout(mainLayout)
         self.setWindowTitle(self.tr("Biovis"))
 
+        self.size = 1
+
         self.show()
 
-    def keyPressEvent(self, e):
+    #def keyPressEvent(self, e):
         
-        if e.key() == QtCore.Qt.Key_Escape:
-            self.close()
+        #if e.key() == QtCore.Qt.Key_Escape:
+            #self.close()
             
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -350,7 +352,20 @@ class GLWidget(QtOpenGL.QGLWidget):
         # print the modelview matrix
         #print(self.MV)
 
-
+    def save(self, i):
+        """Save cluster plot to file"""
+        print "SAVING SCREENGRAB"
+        fname = "/home/cat/Pictures/1.png"
+        
+        if fname:
+            fname = str(fname) # convert from QString
+            image = self.grabFrameBuffer() # defaults to withAlpha=False, makes no difference
+            try:
+                image.save(fname)
+            except Exception as e:
+                QtGui.QMessageBox.critical(
+                    self.panel, "Error saving file", str(e),
+                    QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
     def resizeGL(self, width, height):
         GL.glViewport(0, 0, width, height)
