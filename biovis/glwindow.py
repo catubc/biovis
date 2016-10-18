@@ -93,26 +93,34 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.frame = fig.frame
         self.frame_colours = fig.frame_colours
 
+        self.initial_call=True
         self.initializeGL()
         self.updateGL()
         self.paintGL()
         
-    #def reloadGL(self, fig):
+    def reloadGL(self, fig):
         
-        #print "...reloading GL widget..."
+        print "...reloading GL widget..."
         
-        #self.segments = fig.segments
-        #self.segments_colours = fig.segments_colours
-        #self.triangle_points = fig.triangle_points
-        #self.triangle_colours = fig.triangle_colours
-        #self.layers = fig.layers
-        #self.layers_colours = fig.layers_colours
-        #self.frame = fig.frame
-        #self.frame_colours = fig.frame_colours
+        self.background = fig.background
+        self.segments = np.array(fig.segments)
+        self.segments_colours = np.array(fig.segments_colours)
+        self.segments3D = np.array(fig.segments3D)
+        self.segments3D_colours = np.array(fig.segments3D_colours)
+        self.segments3D_joints = np.array(fig.segments3D_joints)
+        self.segments3D_joints_colours = np.array(fig.segments3D_joints_colours)
+        self.sphere_points = np.array(fig.sphere_points)
+        self.sphere_colours = np.array(fig.sphere_colours)
+        self.layers = fig.layers
+        self.layers_colours = fig.layers_colours
+        self.frame = fig.frame
+        self.frame_colours = fig.frame_colours
+
+        self.initial_call=False
+        self.initializeGL()
+        self.updateGL()
+        self.paintGL()
         
-        #self.initializeGL()
-        #self.updateGL()
-        #self.paintGL()
         
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
@@ -132,7 +140,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         #GL.glPointSize(1.5) # truncs to the nearest pixel if antialiasing is off
         #glShadeModel(GL_FLAT)
         #glEnable(GL_CULL_FACE) # only useful for solids
-        GL.glTranslate(0, 750, -3000) # init camera distance from origin
+        
+        if self.initial_call: GL.glTranslate(0, 750, -3000) # init camera distance from origin
 
         #Modded transparency: blends colours in order they were plotted; otherwise need to use compiled shaders 
         GL.glEnable (GL.GL_BLEND)
@@ -354,8 +363,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 
     def save(self, i):
         """Save cluster plot to file"""
-        print "SAVING SCREENGRAB"
-        fname = "/home/cat/Pictures/1.png"
+        print "...saving screengrab..."
+        fname = "1.png"
         
         if fname:
             fname = str(fname) # convert from QString
@@ -366,6 +375,7 @@ class GLWidget(QtOpenGL.QGLWidget):
                 QtGui.QMessageBox.critical(
                     self.panel, "Error saving file", str(e),
                     QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+        print "... done..."
 
     def resizeGL(self, width, height):
         GL.glViewport(0, 0, width, height)

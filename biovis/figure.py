@@ -113,12 +113,9 @@ class Figure(object):
         pass
 
 
-    def resize_screen(self):
+    def resize_screen(self, length, width):
         
-        sizes = [1000, 10000]
-        
-        self.GUI.resize(sizes[self.GUI.size%2], sizes[self.GUI.size%2])
-        self.GUI.size+=1
+        self.GUI.resize(int(length), int(width))
 
         self.GUI.glWidget.updateGL()
 
@@ -155,12 +152,11 @@ class Figure(object):
                 
     def update(self):   #Restarts widget
 
-        #self.GUI.glWidget.repaint()
-        #self.GUI.show()
-        self.GUI.glWidget.updateGL()
+        self.GUI.glWidget.reloadGL(self)
+        #self.GUI.glWidget.update()
         #self.GUI.glWidget.updateGL()
-        #self.GUI.glWidget.repaint()
         #self.GUI.glWidget.show()
+        #self.GUI.show()
 
         #self.app.processEvents()
 
