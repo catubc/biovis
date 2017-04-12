@@ -35,7 +35,7 @@ def compute_segs(morphology,cell_prop):
     RotZ = rotation_matrix([0,0,1],-phi_z)
     RotYZ = RotY.dot(RotZ)	# apply two rotations
 
-    model_id =  cell_prop['model_id']	
+    node_type_id =  cell_prop['node_type_id']	
     morph_segs_start = morphology["segs_start"]
     morph_segs_end =   morphology["segs_end"] 
         

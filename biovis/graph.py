@@ -15,17 +15,17 @@ def load_nodes(cells_file_name, cell_models_file_name):
 
 
     c_df = pd.read_csv(cells_file_name, sep=' ')
-    c_df.set_index('id',inplace=True)
+    c_df.set_index('node_id',inplace=True)
 
     cm_df = pd.read_csv(cell_models_file_name, sep=' ')
-    cm_df.set_index('model_id',inplace=True)
+    cm_df.set_index('node_type_id',inplace=True)
 
     ncells = len(c_df.index) # total number of simulated cells
 
     nodes_df = pd.merge(left=c_df,
                             right=cm_df, 
                             how='left', 
-                            left_on='model_id', 
+                            left_on='node_type_id', 
                             right_index=True) # use 'model_id' key to merge, for right table the "model_id" is an index
     
     print ncells
@@ -79,4 +79,21 @@ def load_synapses(synapses_dir, gid):
     syn_locs = np.int16(syn_locs)
     
     return syn_locs
+
+
+
+def load_syns_h5(synapse_file_name):
+    
+	with h5py.File(synapse_file_name,'r') as f5:
+		seg_ids = f5["seg_id"][...]
+		src_gids = f5["src_gid"][...]
+    
+	return seg_ids,src_gids
+
+
+def load_syns(synapse_file):
+
+    syn_df = pd.read_csv(synapse_file, sep=' ')
+    return syn_df
+
     

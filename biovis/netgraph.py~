@@ -11,7 +11,7 @@ import numpy as np
 #********************************************************************
 
 def load_nodes(cells_file_name, cell_models_file_name):
-    print "...importing nodes..."
+    print "...importing nodes: ",
 
 
     c_df = pd.read_csv(cells_file_name, sep=' ')
@@ -21,7 +21,6 @@ def load_nodes(cells_file_name, cell_models_file_name):
     cm_df.set_index('model_id',inplace=True)
 
     ncells = len(c_df.index) # total number of simulated cells
-    print "...total # cells simulated: ", ncells
 
     nodes_df = pd.merge(left=c_df,
                             right=cm_df, 
@@ -29,12 +28,12 @@ def load_nodes(cells_file_name, cell_models_file_name):
                             left_on='model_id', 
                             right_index=True) # use 'model_id' key to merge, for right table the "model_id" is an index
     
+    print ncells
     return nodes_df, cm_df
 
    
     
 def load_morphologies(morph_dir, cm_df):
-    print "...importing morphologies..."
 
     morphologies = {}
     soma_sizes = {}
@@ -61,7 +60,40 @@ def load_morphologies(morph_dir, cm_df):
 
         f5.close()
 
+    print "# unique morphologies: ", len(morphologies)
 
         
-    return morphologies
+    return morphologies,soma_sizes
+
+
+
+def load_synapses(synapses_dir, gid):
+    
+    import csv
+    with open(synapses_dir+'/'+str(gid)+'.csv', 'rb') as csvfile:
+        rows = csv.reader(csvfile)
+        next(rows, None)    #Skip header
+        syn_locs = []
+        for row in rows:
+            syn_locs.append(row[0].split()[1])
+    syn_locs = np.int16(syn_locs)
+    
+    return syn_locs
+
+
+
+def load_syns_h5(synapse_file_name):
+    
+	with h5py.File(synapse_file_name,'r') as f5:
+		seg_ids = f5["seg_id"][...]
+		src_gids = f5["seg_id"][...]
+    
+	return seg_ids,src_gids
+
+
+def load_syns(synapse_file):
+
+    syn_df = pd.read_csv(synapse_file, sep=' ')
+    return syn_df
+
     

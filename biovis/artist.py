@@ -27,8 +27,8 @@ def draw_morphologies(cells_select_df, morphologies, cmap,color_label):
     for gid, cell_prop in cells_select_df.iterrows():  
         cell_counter+=1         
         if cell_counter%1000==0: print cell_counter,
-        model_id =  cell_prop['model_id']	
-        morphology = morphologies[model_id]
+        node_type_id =  cell_prop['node_type_id']	
+        morphology = morphologies[node_type_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
 
         color = cmap_rgb[cell_prop[color_label]]
@@ -64,8 +64,8 @@ def draw_morphologies3D(cells_select_df, morphologies, cmap, color_label, n_face
         color = cmap_rgb[cell_prop[color_label]]
 
         #Load segs starts/ends 
-        model_id =  cell_prop['model_id']	
-        morphology = morphologies[model_id]
+        node_type_id =  cell_prop['node_type_id']	
+        morphology = morphologies[node_type_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
 
         segs_coords, segs_colours, segs_coords_joints, segs_joints_colours = draw_line_segments3D(segs_start,segs_end,color,n_faces)
@@ -84,7 +84,7 @@ def draw_line_segments3D(segs_start, segs_end, color, n_faces):
     '''
 
     #plotting parameters;
-    a1 = 3.; a2 = 3.            #constant radii of cylinders; TODO Load proper dendrite radii
+    a1 = 1.; a2 = 1.            #constant radii of cylinders; TODO Load proper dendrite radii
     N = n_faces                 #number of sides in the cylinder; 
     shading_gradient = 0.7      #0.9..0.1, controls the amount of gradient in the shading
 
@@ -260,7 +260,7 @@ def draw_line_segments3D(segs_start, segs_end, color, n_faces):
     return segs_coords, segs_colours, segs_joints_coords, segs_joints_colours
 
 
-def draw_synapses(segments3D, cid, synapses, cells_select_df, morphologies, cmap, color_label, n_faces):
+def draw_synapses(segments3D, cid, synapses, nodes_df, morphologies, cmap, color_label, n_faces):
 
     '''segments3D contains the quad surface vertices needed for localization of synapses
     '''
@@ -284,52 +284,56 @@ def draw_synapses(segments3D, cid, synapses, cells_select_df, morphologies, cmap
     biovis_dir = os.path.dirname(prim.__file__)  # path to package
     sphere_primitive = prim.load_soma_sphere(biovis_dir)
 
-    #Place synapses on dendrites
-    for gid, cell_prop in cells_select_df.iterrows():  
+    #Place synapses on dendrites for a particular cell
+	    
+    node_type_id =  nodes_df.loc[cid]['node_type_id']	
     
-        model_id =  cell_prop['model_id']	
+#        color = [255,0,0]                         #************* HARDWIRED COLOR SCHEME FOR NOW; REMOVE LATER
+    radius = 2                                #************* SYNAPSE SIZE IS FIXED; SHOULD BE SET FROM ANATOMICS
+
+#        for k in range(len(synapses)):
+    for seg_id, src_gid in zip(synapses[0],synapses[1]):
+        seg_loc = seg_id-1
+#        print seg_id
+        color_prop = nodes_df.loc[src_gid][color_label]
+#            seg_loc = synapses[k]      
+#            if seg_loc > n_segs: continue       #************* REMOVE THIS ONCE SYNAPSE FILES MATCH THE CELL AS TO NOT GO OVER MAX #SEGS
+
+        color = cmap_rgb[color_prop]
+
+        #Select a random face and position along face:
+        face = np.random.randint(n_faces)
+        pos = np.random.rand()
         
-        #color = cmap_rgb[cell_prop[color_label]]
-        color = [255,0,0]                         #************* HARDWIRED COLOR SCHEME FOR NOW; REMOVE LATER
-        radius = 1                                #************* SYNAPSE SIZE IS FIXED; SHOULD BE SET FROM ANATOMICS
+        #set 3d location along vertex
+        x_synapse = segs_vertices[seg_loc][face][0][0]+ (segs_vertices[seg_loc][face][1][0]- segs_vertices[seg_loc][face][0][0])*pos
+        y_synapse = segs_vertices[seg_loc][face][0][1]+ (segs_vertices[seg_loc][face][1][1]- segs_vertices[seg_loc][face][0][1])*pos
+        z_synapse = segs_vertices[seg_loc][face][0][2]+ (segs_vertices[seg_loc][face][1][2]- segs_vertices[seg_loc][face][0][2])*pos
+                   
+        #Compute unit vector along direction away from dendrite cylinder
+        #First find vector to opposite side of cylinder same location
+        x_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][0]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0])*pos
+        y_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][1]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1])*pos
+        z_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][2]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2])*pos
 
-        for k in range(len(synapses)):
-            seg_loc = synapses[k]      
-            if seg_loc > n_segs: continue       #************* REMOVE THIS ONCE SYNAPSE FILES MATCH THE CELL AS TO NOT GO OVER MAX #SEGS
+        #Second, compute unit vector across cylinder:
+        unit_len = np.linalg.norm([x_synapse_opposite-x_synapse, y_synapse_opposite-y_synapse, z_synapse_opposite-z_synapse])
+        x_unit = (x_synapse_opposite-x_synapse)/unit_len
+        y_unit = (y_synapse_opposite-y_synapse)/unit_len
+        z_unit = (z_synapse_opposite-z_synapse)/unit_len
+        
+        #Third, add vector back in:
+        x_synapse -= x_unit*radius
+        y_synapse -= y_unit*radius
+        z_synapse -= z_unit*radius
 
-            #Select a random face and position along face:
-            face = np.random.randint(n_faces)
-            pos = np.random.rand()
-            
-            #set 3d location along vertex
-            x_synapse = segs_vertices[seg_loc][face][0][0]+ (segs_vertices[seg_loc][face][1][0]- segs_vertices[seg_loc][face][0][0])*pos
-            y_synapse = segs_vertices[seg_loc][face][0][1]+ (segs_vertices[seg_loc][face][1][1]- segs_vertices[seg_loc][face][0][1])*pos
-            z_synapse = segs_vertices[seg_loc][face][0][2]+ (segs_vertices[seg_loc][face][1][2]- segs_vertices[seg_loc][face][0][2])*pos
-                       
-            #Compute unit vector along direction away from dendrite cylinder
-            #First find vector to opposite side of cylinder same location
-            x_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][0]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0])*pos
-            y_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][1]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1])*pos
-            z_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][2]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2])*pos
+        
+        syn_centre = np.array([x_synapse,y_synapse,z_synapse])
+        
+        sphere1_points,sphere1_colours = draw_sphere(radius, syn_centre, color, sphere_primitive)
 
-            #Second, compute unit vector across cylinder:
-            unit_len = np.linalg.norm([x_synapse_opposite-x_synapse, y_synapse_opposite-y_synapse, z_synapse_opposite-z_synapse])
-            x_unit = (x_synapse_opposite-x_synapse)/unit_len
-            y_unit = (y_synapse_opposite-y_synapse)/unit_len
-            z_unit = (z_synapse_opposite-z_synapse)/unit_len
-            
-            #Third, add vector back in:
-            x_synapse -= x_unit*radius
-            y_synapse -= y_unit*radius
-            z_synapse -= z_unit*radius
-
-            
-            syn_centre = np.array([x_synapse,y_synapse,z_synapse])
-            
-            sphere1_points,sphere1_colours = draw_sphere(radius, syn_centre, color, sphere_primitive)
-
-            sphere_points.extend(sphere1_points)
-            sphere_colours.extend(sphere1_colours)
+        sphere_points.extend(sphere1_points)
+        sphere_colours.extend(sphere1_colours)
 
 
     #TODO: PLACE SYNAPSES ON SOMA
@@ -371,8 +375,8 @@ def draw_slice(cells_select_df, morphologies, cmap,color_label,xplane_range):
     for gid, cell_prop in cells_select_df.iterrows():  
         cell_counter+=1         
         if cell_counter%1000==0: print cell_counter,
-        model_id =  cell_prop['model_id']    
-        morphology = morphologies[model_id]
+        node_type_id =  cell_prop['node_type_id']    
+        morphology = morphologies[node_type_id]
         segs_start,segs_end = tr.compute_segs(morphology,cell_prop)
 
         segs_center = 0.5*(segs_start+segs_end)
@@ -416,11 +420,11 @@ def draw_somas(cells_select_df, morphologies, cmap, color_label):
         z_soma = cell_prop['z_soma']
         soma_centre = np.array([x_soma,y_soma,z_soma])
     
-        model_id =  cell_prop['model_id']	
+        node_type_id =  cell_prop['node_type_id']	
         
-        radius = 0.5*morphologies[model_id]     #Radius comes from first morphology segment   
-        print "...radius: ", radius
-        
+        radius = 0.5*morphologies[node_type_id]     #Radius comes from first morphology segment   
+#        print "...radius: ", radius
+
         color = cmap_rgb[cell_prop[color_label]]
 
         sphere1_points,sphere1_colours = draw_sphere(radius,soma_centre,color,sphere_primitive)
@@ -471,19 +475,20 @@ def draw_sphere(radius, soma_centre, color, sphere_primitive):
 
 
 
-def draw_layers(layer_depths, layer_colors, layer_alpha):
+def draw_layers(side,layer_depths, layer_colors, layer_alpha):
     
     layers = []
     color_list = []
+    L = side
     for depth,color_name in zip(layer_depths,layer_colors):
 
-        vertex_0 = [-500., -depth, 500.]
-        vertex_1 = [500., -depth, 500.]
-        vertex_2 = [-500., -depth, -500.]
+        vertex_0 = [-L, -depth, L]
+        vertex_1 = [L, -depth, L]
+        vertex_2 = [-L, -depth, -L]
 
-        vertex_3 = [-500., -depth, -500.]
-        vertex_4 = [500., -depth, -500.]
-        vertex_5 = [500., -depth, 500.]
+        vertex_3 = [-L, -depth, -L]
+        vertex_4 = [L, -depth, -L]
+        vertex_5 = [L, -depth, L]
 
         layers.append(vertex_0)
         layers.append(vertex_1)
@@ -536,8 +541,94 @@ def draw_frame(box_coords, box_colour):
 
     frame_colours = box_colour*72  
     
-    frame = -np.array(frame)
-    frame_colours = np.array(frame_colours)
+#    frame = -np.array(frame)
+#    frame_colours = np.array(frame_colours)
 
     return frame, frame_colours
+
+
+def draw_synapses_old(segments3D, cid, syn_df, cells_select_df, morphologies, cmap, color_label, n_faces):
+
+    '''segments3D contains the quad surface vertices needed for localization of synapses
+    '''
+
+    #Recover the vertices for each segment
+    n_segs = len(segments3D)/(n_faces*4)
+    print "...n_segs: ", n_segs
+    
+    segs_vertices = []   
+    for p in range(n_segs):
+        segs_vertices.append([])
+        for k in range(n_faces):
+            segs_vertices[p].append([segments3D[p*n_faces*4+k*4], segments3D[p*n_faces*4+k*4+1]])
+
+
+    sphere_points=[]
+    sphere_colours=[]
+
+    cmap_rgb = cm.convert_to_rgb(cmap)          #************** NEED TO HAVE SYNAPSE COLOUR SCHEME AT SOME POINT
+
+    biovis_dir = os.path.dirname(prim.__file__)  # path to package
+    sphere_primitive = prim.load_soma_sphere(biovis_dir)
+
+    #Place synapses on dendrites
+    for gid, cell_prop in cells_select_df.iterrows():  
+    
+        node_type_id =  cell_prop['node_type_id']	
+        
+#        color = [255,0,0]                         #************* HARDWIRED COLOR SCHEME FOR NOW; REMOVE LATER
+        radius = 1                                #************* SYNAPSE SIZE IS FIXED; SHOULD BE SET FROM ANATOMICS
+
+#        for k in range(len(synapses)):
+        for syn_id, syn_prop in syn_df.iterrows():
+            seg_loc = syn_prop["seg_id"]
+            color_label = syn_prop["src_label"]
+#            seg_loc = synapses[k]      
+#            if seg_loc > n_segs: continue       #************* REMOVE THIS ONCE SYNAPSE FILES MATCH THE CELL AS TO NOT GO OVER MAX #SEGS
+
+            color = cmap_rgb[color_label]
+
+            #Select a random face and position along face:
+            face = np.random.randint(n_faces)
+            pos = np.random.rand()
+            
+            #set 3d location along vertex
+            x_synapse = segs_vertices[seg_loc][face][0][0]+ (segs_vertices[seg_loc][face][1][0]- segs_vertices[seg_loc][face][0][0])*pos
+            y_synapse = segs_vertices[seg_loc][face][0][1]+ (segs_vertices[seg_loc][face][1][1]- segs_vertices[seg_loc][face][0][1])*pos
+            z_synapse = segs_vertices[seg_loc][face][0][2]+ (segs_vertices[seg_loc][face][1][2]- segs_vertices[seg_loc][face][0][2])*pos
+                       
+            #Compute unit vector along direction away from dendrite cylinder
+            #First find vector to opposite side of cylinder same location
+            x_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][0]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][0])*pos
+            y_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][1]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][1])*pos
+            z_synapse_opposite = segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2]+ (segs_vertices[seg_loc][(face+n_faces/2)%n_faces][1][2]- segs_vertices[seg_loc][(face+n_faces/2)%n_faces][0][2])*pos
+
+            #Second, compute unit vector across cylinder:
+            unit_len = np.linalg.norm([x_synapse_opposite-x_synapse, y_synapse_opposite-y_synapse, z_synapse_opposite-z_synapse])
+            x_unit = (x_synapse_opposite-x_synapse)/unit_len
+            y_unit = (y_synapse_opposite-y_synapse)/unit_len
+            z_unit = (z_synapse_opposite-z_synapse)/unit_len
+            
+            #Third, add vector back in:
+            x_synapse -= x_unit*radius
+            y_synapse -= y_unit*radius
+            z_synapse -= z_unit*radius
+
+            
+            syn_centre = np.array([x_synapse,y_synapse,z_synapse])
+            
+            sphere1_points,sphere1_colours = draw_sphere(radius, syn_centre, color, sphere_primitive)
+
+            sphere_points.extend(sphere1_points)
+            sphere_colours.extend(sphere1_colours)
+
+
+    #TODO: PLACE SYNAPSES ON SOMA
+    #Place synapses on soma
+    #for gid, cell_prop in cells_select_df.iterrows():  
+
+    print "ready to display synapses"
+    
+    return sphere_points, sphere_colours
+
 

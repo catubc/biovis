@@ -1,11 +1,12 @@
 import numpy as np
 import math
 
-def rotation_matrix( axis, theta):
+def rotation_matrix(axis, theta):
     """
     Return the rotation matrix associated with counterclockwise rotation about
     the given axis by theta radians.
     """
+
     axis = np.asarray(axis)
     theta = np.asarray(theta)
     axis = axis/math.sqrt(np.dot(axis, axis))
@@ -20,7 +21,7 @@ def rotation_matrix( axis, theta):
 
 
 
-def transform_segs(morphology,cell_prop):
+def compute_segs(morphology,cell_prop):
 
     x_soma = cell_prop['x_soma'] # needed to do those in sequence because Series did not inherite the dtype from DataFrame 
     y_soma = cell_prop['y_soma'] # need to look for a more elegant solution to this 

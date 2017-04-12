@@ -90,8 +90,11 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.sphere_colours = np.array(fig.sphere_colours)
         self.layers = fig.layers
         self.layers_colours = fig.layers_colours
-        self.frame = fig.frame
-        self.frame_colours = fig.frame_colours
+        self.frame = -np.array(fig.frame)
+        self.frame_colours = np.array(fig.frame_colours)
+
+#    frame = -np.array(frame)
+#    frame_colours = np.array(frame_colours)
 
         self.initial_call=True
         self.initializeGL()

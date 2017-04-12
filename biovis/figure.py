@@ -56,15 +56,19 @@ class Figure(object):
     def set_frame(self, frame, frame_colours):
         print "...setting frame..."
 
-        if frame == []: self.frame = []; self.frame_colours = []                #Reset somas
-        else: self.frame, self.frame_colours = art.draw_frame(frame, frame_colours)
-                        
+        if frame == []: 
+            self.frame = []; self.frame_colours = []                #Reset somas
+        else: 
+#            self.frame, self.frame_colours = art.draw_frame(frame, frame_colours)
+            frame, frame_colours = art.draw_frame(frame, frame_colours)
+            self.frame.extend(frame)
+            self.frame_colours.extend(frame_colours)              
 
-    def set_layers(self, layer_depths, layer_colours, layer_alpha):
+    def set_layers(self, side,layer_depths, layer_colours, layer_alpha):
         print "...setting layers..."
 
         if layer_depths == []: self.layers = []; self.layers_colours = []       #Reset morphs
-        else: self.layers, self.layers_colours = art.draw_layers(layer_depths, layer_colours, layer_alpha)
+        else: self.layers, self.layers_colours = art.draw_layers(side, layer_depths, layer_colours, layer_alpha)
        
 
     def plot_somas(self, cells_select_df, morphologies, cmap,color_label):
@@ -96,10 +100,10 @@ class Figure(object):
         self.segments.extend(segments)
         self.segments_colours.extend(segments_colours)
     
-    def plot_synapses(self, cid, synapses, cells_select_df, morphologies, cmap, color_label, n_faces):
+    def plot_synapses(self, cid, synapses, nodes_df, morphologies, cmap, color_label, n_faces):
     
         #Plot synapses along surface of cylinders; 
-        sphere_points, sphere_colours = art.draw_synapses(self.segments3D, cid, synapses, cells_select_df, morphologies, cmap, color_label, n_faces)
+        sphere_points, sphere_colours = art.draw_synapses(self.segments3D, cid, synapses, nodes_df, morphologies, cmap, color_label, n_faces)
         self.sphere_points.extend(sphere_points)
         self.sphere_colours.extend(sphere_colours)
         
