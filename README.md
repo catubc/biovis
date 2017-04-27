@@ -1,8 +1,7 @@
 # biovis
-biovis simulator visualization toolbox
+Biovis is an OpenGL-based visualization tool for the Allen Institute (Seattle) biophysically detailed simulator and network builder. 
 
-
-DEPENDENCIES
+**DEPENDENCIES**
 
 PyQt4
 
